@@ -131,7 +131,6 @@ class PostController extends Controller
         $followings = Follow::where('follower_id', '=', $id)->get('following_id');
         $array_length = count($followings);
         $array = array();
-        array_push($array, $id);
 
         //배열에 팔로잉한 아이디 push
         for ($i = 0; $i < $array_length; $i++) {

@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redis;
 
 class MMRController extends Controller
@@ -58,16 +59,20 @@ class MMRController extends Controller
             //이거를 이제 mongoDB에 보내서 요청
             $match_gps_id = $random_match_post->gps_id;
 
-            $match_user = User::where('id', '=', $random_match_post->user_id)->get('name');
+            //Node에서 GPS_data_id를 받아와서 활동에 저장
+            $response = Http::get("http://13.124.24.179/api/gpsdata/$match_gps_id");
+
+            $gpsData = json_decode($response->getBody(), true);
+
+
+            return response([
+                'message' => '매칭이 완료 됐습니다',
+                'gpsData' => $gpsData
+            ], 201);
         } else {
             return response([
                 'message' => ['이 트랙에서 매칭 할 수 있는 유저가 없습니다.']
             ], 401);
         }
-
-        return response([
-            'message' => '매칭이 완료 됐습니다',
-            'matching_user' => $match_user
-        ], 201);
     }
 }
