@@ -43,7 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', [AuthController::class, 'user']);
     Route::post('logout', [AuthController::class, 'logout']);
 
-    // 운동기록 업로드
+    // 운동sns
     Route::prefix('post')->group(function () {
         Route::post('/store', [PostController::class, 'store']);
         Route::get('/index', [PostController::class, 'index']);
@@ -51,7 +51,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/show/{id}', [PostController::class, 'show']);
         Route::put('/update/{id}', [PostController::class, "update"]);
         Route::delete('/{id}', [PostController::class, "destroy"]);
-        Route::get('/distance', [PostController::class, 'distance']);
+        //자전거 달리기 비율
+        Route::get('/type', [PostController::class, 'type']);
+        Route::get('/weekRecord', [PostController::class, 'weekRecord']);
     });
 
     // 팔로우
