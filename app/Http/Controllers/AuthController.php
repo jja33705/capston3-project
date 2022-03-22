@@ -19,7 +19,7 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        return User::create([
+        $user = User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
@@ -30,6 +30,23 @@ class AuthController extends Controller
             'introduce' => $request->input('introduce'),
             'location' => $request->input('location'),
             'mmr' => 0,
+        ]);
+
+        //요일별 누적 거리
+        DayRecord::create([
+            'user_id' => $user->id,
+            'Mon' => 0,
+            'Tue' => 0,
+            'Wed' => 0,
+            'Tur' => 0,
+            'Fri' => 0,
+            'Sat' => 0,
+            'Sun' => 0,
+        ]);
+
+        return response([
+            'message' => '회원가입 성공',
+            'user' => $user
         ]);
     }
 
@@ -49,18 +66,6 @@ class AuthController extends Controller
 
 
         $user = User::with(['followings', 'followers', 'posts'])->find($login_user->id);
-
-        //요일별 누적 거리
-        DayRecord::create([
-            'user_id' => $login_user->id,
-            'Mon' => 0,
-            'Tue' => 0,
-            'Wed' => 0,
-            'Tur' => 0,
-            'Fri' => 0,
-            'Sat' => 0,
-            'Sun' => 0,
-        ]);
 
         return response([
             'access_token' => $login_token,
