@@ -17,7 +17,7 @@ class RecordController extends Controller
     public function store(Request $request)
     {
         //mmr상승 함수
-        if ($request->kind == "랭크") {
+        if ($request->kind == "랭크전") {
             $this->mmr_point($request);
         }
 
