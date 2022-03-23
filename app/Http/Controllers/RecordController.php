@@ -66,8 +66,9 @@ class RecordController extends Controller
         $calorie = Post::where('user_id', '=', $user->id)->get('calorie');
         $count = Post::where('user_id', '=', $user->id)->count();
 
+
         for ($i = 0; $i < $count; $i++) {
-            $weekCalorie += $calorie[$i]->time;
+            $weekCalorie += $calorie[$i]->calorie;
         };
 
         if ($weekCalorie) {

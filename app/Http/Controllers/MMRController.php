@@ -40,9 +40,13 @@ class MMRController extends Controller
 
         $gpsData = json_decode($response->getBody(), true);
 
-        return response([
-            'gpsData' => $gpsData
-        ], 200);
+        if ($gpsData) {
+            return response([
+                'gpsData' => $gpsData
+            ], 200);
+        } else {
+            return response(204);
+        }
     }
 
 
