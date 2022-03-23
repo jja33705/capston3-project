@@ -33,32 +33,6 @@ class AuthController extends Controller
             'mmr' => 0,
         ]);
 
-        //자전거 요일별 누적 거리
-        DayRecord::create([
-            'user_id' => $user->id,
-            'Mon' => 0,
-            'Tue' => 0,
-            'Wed' => 0,
-            'Tur' => 0,
-            'Fri' => 0,
-            'Sat' => 0,
-            'Sun' => 0,
-        ]);
-
-        //달리기 요일별 누적 거리
-        RunRecord::create([
-            'user_id' => $user->id,
-            'Mon' => 0,
-            'Tue' => 0,
-            'Wed' => 0,
-            'Tur' => 0,
-            'Fri' => 0,
-            'Sat' => 0,
-            'Sun' => 0,
-        ]);
-
-
-
         return response([
             'message' => '회원가입 성공',
             'user' => $user
