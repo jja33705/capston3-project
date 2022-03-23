@@ -51,7 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/show/{id}', [PostController::class, 'show']);
         Route::put('/update/{id}', [PostController::class, "update"]);
         Route::delete('/{id}', [PostController::class, "destroy"]);
-        Route::get('/weekBike', [PostController::class, "weekBike"]);
+        Route::get('/weekRecord', [PostController::class, "weekRecord"]);
         //자전거 달리기 비율
         // Route::get('/weekDistance', [PostController::class, 'weekDistance']);
     });
