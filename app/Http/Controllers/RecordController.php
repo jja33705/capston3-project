@@ -13,45 +13,6 @@ use Illuminate\Support\Facades\Http;
 
 class RecordController extends Controller
 {
-    //개개인별 기록 저장
-    public function store(Request $request)
-    {
-        //mmr상승 함수
-        if ($request->kind == "랭크전") {
-            $this->mmr_point($request);
-        }
-
-        $input = array_merge(
-            $request->all(),
-            ["user_id" => Auth::user()->id],
-        );
-
-        //기록 등록
-        if (Record::create($input)) {
-            return response([
-                'message' => ['기록이 저장됐습니다']
-            ], 201);
-        } else {
-            return response([
-                'message' => ['실패했습니다']
-            ], 405);
-        }
-    }
-
-    //내 기록 불러오기
-    public function myIndex()
-    {
-        $id = Auth::user()->getAttribute('id');
-        return Record::with(['post'])->orderby('created_at', 'desc')->where('user_id', '=', $id)->paginate(5);
-    }
-
-    //상대 기록 불러오기
-    public function index($id)
-    {
-        return Record::with(['post'])->orderby('created_at', 'desc')->where('user_id', '=', $id)->paginate(5);
-    }
-
-
     public function type()
     {
         $user_id = Auth::user()->id;
@@ -64,36 +25,61 @@ class RecordController extends Controller
             return response([
                 '자전거 비율' => $bike_percentage,
                 '달리기 비율' => $run_percentage
-            ], 201);
+            ], 200);
         } else {
             return response([
                 'message' => '활동내역이 없습니다'
-            ]);
+            ], 204);
         }
     }
-
 
     public function totalTime()
     {
         $user = Auth::user();
-        return Post::where('user_id', '=', $user->id)->get('time');
+        $weekTime = 0;
+
+        $time = Post::where('user_id', '=', $user->id)->get('time');
+        $count = Post::where('user_id', '=', $user->id)->count();
+
+        for ($i = 0; $i < $count; $i++) {
+            $weekTime += $time[$i]->time;
+        };
+
+        if ($weekTime) {
+            return response(
+                $weekTime,
+                200
+            );
+        } else {
+            return response(
+                '누적 시간이 없습니다',
+                204
+            );
+        }
     }
 
-
-
-    //mmr상승 함수
-    protected function mmr_point($request)
+    public function totalCalorie()
     {
-        $win_user_id = $request->win_user_id;
-        // $lose_user_id = $request->lose_user_id;
-        $id = Auth::user()->id;
+        $user = Auth::user();
+        $weekCalorie = 0;
 
-        //이기면 mmr +10
-        if ($id == $win_user_id) {
-            DB::table('users')->where('id', $id)->increment('mmr', 10);
+        $calorie = Post::where('user_id', '=', $user->id)->get('calorie');
+        $count = Post::where('user_id', '=', $user->id)->count();
+
+        for ($i = 0; $i < $count; $i++) {
+            $weekCalorie += $calorie[$i]->time;
+        };
+
+        if ($weekCalorie) {
+            return response(
+                $weekCalorie,
+                200
+            );
         } else {
-            //지면 mmr +3
-            DB::table('users')->where('id', $id)->increment('mmr', 3);
+            return response(
+                '누적 칼로리가 없습니다',
+                204
+            );
         }
     }
 }

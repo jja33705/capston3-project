@@ -78,18 +78,16 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 
-    //전적 기록저장, 불러오기
+    //누적 기록 불러오기
     Route::prefix('/record')->group(function () {
-        Route::get('/store', [RecordController::class, 'store'])->name('record.store');
-        Route::get('/index/{id}', [RecordController::class, 'index'])->name('record.index');
-        Route::get('/myIndex', [RecordController::class, 'myIndex'])->name('record.myIndex');
         Route::get('/type', [RecordController::class, 'type']);  //자전거 달리기 비율
-        Route::get('/totalTime', [RecordController::class, 'totalTime']);
+        Route::get('/totalTime', [RecordController::class, 'totalTime']);  //누적 시간
+        Route::get('/totalCalorie', [RecordController::class, 'totalCalorie']);  //누적 칼로리
     });
 
     //랭킹조회
     Route::prefix('/ranking')->group(function () {
         Route::get('/mmr', [RankingController::class, 'mmr']);
-        Route::post('/track', [RankingController::class, 'track']);
+        Route::get('/track/{id}', [RankingController::class, 'track']);
     });
 });

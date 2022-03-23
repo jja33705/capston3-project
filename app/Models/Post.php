@@ -25,7 +25,8 @@ class Post extends Model
         "gps_id",
         "mmr",
         "kind",
-        "date"
+        "date",
+        "opponent_id"
     ];
 
     public function user()

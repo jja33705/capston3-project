@@ -8,14 +8,20 @@ use Illuminate\Http\Request;
 
 class RankingController extends Controller
 {
-    public function track(Request $request)
+    public function track($id)
     {
-        $track_id = $request->track_id;
-        return Post::orderby('time')->where('track_id', '=', $track_id)->get('user_id');
+        $track_id = $id;
+        return response(
+            Post::orderby('time')->where('track_id', '=', $track_id)->get('user_id'),
+            200
+        );
     }
 
     public function mmr()
     {
-        return User::orderby('mmr', 'desc')->get('id');
+        return response(
+            User::orderby('mmr', 'desc')->get('id'),
+            200
+        );
     }
 }

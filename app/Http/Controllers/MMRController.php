@@ -42,7 +42,7 @@ class MMRController extends Controller
 
         return response([
             'gpsData' => $gpsData
-        ], 201);
+        ], 200);
     }
 
 
@@ -77,11 +77,11 @@ class MMRController extends Controller
                 'message' => '매칭이 완료 됐습니다',
                 'user' => $user,
                 'post' => $random_match_post,
-            ]);
+            ], 200);
         } else {
             return response([
                 'message' => '이 트랙에 매칭 할 수 있는 유저가 없습니다.'
-            ]);
+            ], 204);
         }
     }
 }

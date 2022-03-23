@@ -46,9 +46,11 @@ class PostController extends Controller
         $data = json_decode($response, true);
         $gps_id = $data["gpsId"];
 
+        $user = Auth::user();
+
         $input = array_merge(
             $request->all(),
-            ["user_id" => Auth::user()->id],
+            ["user_id" => $user->id],
             ["mmr" => Auth::user()->mmr],
             ["date" => Carbon::now()->format('Y-m-d')],
             ["gps_id" => $gps_id],  //노드에서 받아와야할 정보
@@ -57,7 +59,6 @@ class PostController extends Controller
 
         //요일별로 누적 거리 저장
         // $this->week_record($post, $user);
-
 
         if ($request->hasFile("image")) {
             $files = $request->file("images");
@@ -70,17 +71,16 @@ class PostController extends Controller
             }
         }
 
+
         if ($request->kind == "혼자하기") {
             return response([
                 'message' => ['혼자하기 기록을 저장했습니다']
             ], 201);
         } else {
-            return redirect()->route('record.store', [
-                'post_id' => $post->id,
-                'win_user_id' => $request->win_user_id,
-                'loss_user_id' => $request->loss_user_id,
-                'kind' => $request->kind
-            ]);
+            $myTime = $request->time;
+            $opponentTime = Post::where('id', '=', $request->opponent_id)->first('time');
+            //시간을 비교해서 mmr을 상승
+            return $this->mmrPoint($myTime, $opponentTime);
         }
     }
 
@@ -188,6 +188,8 @@ class PostController extends Controller
         $first = date('Y-m-d', $week_first);
         $last = date('Y-m-d', $week_last);
 
+
+
         $post_distance = Post::where('user_id', '=', $user->id)->where('date', '>=', $first && 'date', '<=', $last)->where('event', '=', $event)->get('distance');
         $post_date = Post::where('user_id', '=', $user->id)->where('date', '>=', $first && 'date', '<=', $last)->where('event', '=', $event)->get('date');
         $count = Post::where('user_id', '=', $user->id)->where('date', '>=', $first && 'date', '<=', $last)->where('event', '=', $event)->count();
@@ -236,6 +238,32 @@ class PostController extends Controller
             "Fri" => $Fri,
             "Sat" => $Sat,
             "Sun" => $Sun
-        ], 201);
+        ], 200);
+    }
+
+
+    //mmr상승 함수
+    protected function mmrPoint($myTime, $opponentTime)
+    {
+        $id = Auth::user()->id;
+        //이기면 mmr +10
+        if ($myTime < $opponentTime->time) {
+            DB::table('users')->where('id', $id)->increment('mmr', 10);
+            return response([
+                'message' => '승리하셨습니다'
+            ], 200);
+        } else if ($myTime = $opponentTime) {
+            //무승부면 mmr + 3
+            DB::table('users')->where('id', $id)->increment('mmr', 3);
+            return response([
+                'message' => '무승부 입니다'
+            ], 200);
+        } else {
+            //지면 mmr +1
+            DB::table('users')->where('id', $id)->increment('mmr', 1);
+            return response([
+                'message' => '패배하셨습니다'
+            ], 200);
+        }
     }
 }

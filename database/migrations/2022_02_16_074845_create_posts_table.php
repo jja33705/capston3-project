@@ -33,6 +33,10 @@ class CreatePostsTable extends Migration
             $table->integer('mmr');
             $table->string('kind');
             $table->date('date');
+            $table->integer('opponent_id')->constrained()
+                ->onUpdate('cascade')
+                ->onDelete('cascade')
+                ->nullable();
             $table->timestamps();
         });
     }

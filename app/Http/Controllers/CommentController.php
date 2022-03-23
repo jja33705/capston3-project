@@ -18,7 +18,6 @@ class CommentController extends Controller
                 'content' => $request->content,
                 'post_id' => $id,
                 'user_id' => Auth::user()->id,
-                'name' => Auth::user()->name,
             ]
         );
 
@@ -39,7 +38,7 @@ class CommentController extends Controller
         $reply = Reply::create(
             [
                 'comment_id' => $id,
-                'name' => Auth::user()->name,
+                'user_id' => Auth::user()->id,
                 'content' => $request->content
             ]
         );
