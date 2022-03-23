@@ -63,9 +63,6 @@ class PostController extends Controller
     // }
     public function store(Request $request)
     {
-
-
-
         $this->validate(
             $request,
             [
@@ -104,7 +101,7 @@ class PostController extends Controller
 
 
         //요일별로 누적 거리 저장
-        $this->week_record($post, $user);
+        // $this->week_record($post, $user);
 
 
         if ($request->hasFile("image")) {
