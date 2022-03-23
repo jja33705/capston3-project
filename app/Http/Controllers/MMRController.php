@@ -71,7 +71,7 @@ class MMRController extends Controller
             $random = array_rand($matching);
             $random_match_post = $matching[$random];
 
-            $user = User::where('id', '=', $random_match_post->user_id)->get();
+            $user = User::where('id', '=', $random_match_post->user_id)->first();
 
             return response([
                 'message' => '매칭이 완료 됐습니다',

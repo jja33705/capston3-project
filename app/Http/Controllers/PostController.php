@@ -17,47 +17,50 @@ use SebastianBergmann\Environment\Console;
 
 class PostController extends Controller
 {
-    public function weekBike()
-    {
-        /*자전거일 경우
-         우선 유저의 모든 자전거 활동을 가져온다
-         한주의 기록인지 아닌지 대소 비교
-         그것을 요일별로 나눈다
-        */
-        $user = Auth::user();
+    // public function weekBike()
+    // {
+    //     /*자전거일 경우
+    //      우선 유저의 모든 자전거 활동을 가져온다
+    //      한주의 기록인지 아닌지 대소 비교
+    //      그것을 요일별로 나눈다
+    //     */
+    //     // $user = Auth::user();
 
-        //주간 체크
-        $today = time();
-        $week = date("w");
-        $week_first = $today - ($week * 86400);  //이번주의 첫째 날
-        $week_last = $week_first + (6 * 86400);  //이번주의 마지막 날
+    //     // //주간 체크
+    //     // $today = time();
+    //     // $week = date("w");
+    //     // $week_first = $today - ($week * 86400);  //이번주의 첫째 날
+    //     // $week_last = $week_first + (6 * 86400);  //이번주의 마지막 날
 
-        $post = Post::where('user_id', '=', $user->id)->where('event', '=', 'B')->get();
-        $count = Post::where('user_id', '=', $user->id)->where('event', '=', 'B')->count();
+    //     // $post = Post::where('user_id', '=', $user->id)->where('event', '=', 'B')->get();
+    //     // $count = Post::where('user_id', '=', $user->id)->where('event', '=', 'B')->count();
 
-        for ($i = 0; $i < $count; $i++) {
-        }
+    //     // for ($i = 0; $i < $count; $i++) {
+    //     //     $date =
+    //     //     if ($week_first <= $date <= $week_last) {
 
-        return $post[0]->created_at;
+    //     //     }
+    //     // }
 
-
-        // $date = strtotime($test);
-
-        // if ($week_first <= $date <= $week_last) {
-        // }
-
-        // return $week_first < $date;
+    //     // return $post[0]->created_at;
 
 
-        $data = Post::where('user_id', '=', 1)->where('id', '=', 1)->get('created_at');
-
-        $date = $data[0]->created_at;
+    //     // $date = strtotime($test);
 
 
 
+    //     // return $week_first < $date;
 
-        return date('Y-m-d', $week_last);
-    }
+
+    //     $data = Post::where('user_id', '=', 1)->where('id', '=', 1)->get('created_at');
+
+    //     $date = $data[0]->created_at;
+
+
+
+
+    //     return date('Y-m-d', $week_last);
+    // }
     public function store(Request $request)
     {
 
