@@ -17,8 +17,52 @@ use SebastianBergmann\Environment\Console;
 
 class PostController extends Controller
 {
+    public function weekBike()
+    {
+        /*자전거일 경우
+         우선 유저의 모든 자전거 활동을 가져온다
+         한주의 기록인지 아닌지 대소 비교
+         그것을 요일별로 나눈다
+        */
+        $user = Auth::user();
+
+        //주간 체크
+        $today = time();
+        $week = date("w");
+        $week_first = $today - ($week * 86400);  //이번주의 첫째 날
+        $week_last = $week_first + (6 * 86400);  //이번주의 마지막 날
+
+        $post = Post::where('user_id', '=', $user->id)->where('event', '=', 'B')->get();
+        $count = Post::where('user_id', '=', $user->id)->where('event', '=', 'B')->count();
+
+        for ($i = 0; $i < $count; $i++) {
+        }
+
+        return $post[0]->created_at;
+
+
+        // $date = strtotime($test);
+
+        // if ($week_first <= $date <= $week_last) {
+        // }
+
+        // return $week_first < $date;
+
+
+        $data = Post::where('user_id', '=', 1)->where('id', '=', 1)->get('created_at');
+
+        $date = $data[0]->created_at;
+
+
+
+
+        return date('Y-m-d', $week_last);
+    }
     public function store(Request $request)
     {
+
+
+
         $this->validate(
             $request,
             [
@@ -54,6 +98,7 @@ class PostController extends Controller
             ["gps_id" => $gps_id],  //노드에서 받아와야할 정보
         );
         $post = Post::create($input);
+
 
         //요일별로 누적 거리 저장
         $this->week_record($post, $user);
@@ -160,27 +205,9 @@ class PostController extends Controller
         }
     }
 
-    public function type()
-    {
-        $user_id = Auth::user()->id;
-        $total_count = Post::where('user_id', '=', $user_id)->count();
-        $bike_count = Post::where('user_id', '=', $user_id)->where('event', '=', 'B')->count();
 
-        if ($total_count != 0) {
-            $bike_percentage = ($bike_count / $total_count) * 100;
-            $run_percentage = 100 - $bike_percentage;
-            return response([
-                '자전거 비율' => $bike_percentage,
-                '달리기 비율' => $run_percentage
-            ], 201);
-        } else {
-            return response([
-                'message' => '활동내역이 없습니다'
-            ]);
-        }
-    }
-
-    public function weekRecord()
+    //요일별 달린 거리
+    public function weekDistance()
     {
         $user = Auth::user();
         return response([
@@ -197,18 +224,26 @@ class PostController extends Controller
         $week_first = $today - ($week * 86400);  //이번주의 첫째 날
         $week_last = $week_first + (6 * 86400);  //이번주의 마지막 날
 
-        //요일별 주간 기록 저장
-        $date = Post::where('user_id', $user->id)->where('id', $post->id)->get();
+        //요일별 주간 기록 저장, event로 자전거인지 달리기인지 구분
+        if ($post->event == 'B') {
+            $table = 'day_records';
+            $date = Post::where('user_id', $user->id)->where('id', $post->id)->get();
+        } else {
+            $table = 'run_records';
+            $date = Post::where('user_id', $user->id)->where('id', $post->id)->get();
+        }
+
         //주행거리
         $distance = $date[0]->distance;
         //생성날짜
         $day = $date[0]->date;
 
+        //한주의 기록인지 아닌지 비교
         if ($week_first <= $day || $week_last >= $day) {
             //요일별로 저장하는 함수
-            $this->save($user, $distance, $day);
+            $this->save($user, $distance, $day, $table);
         } else if ($week_first == $day) {  //그 주의 첫째날과 오늘이 같아지면 한주가 바뀐것이므로 DB를 갱신해준다
-            DB::table('day_records')->where('id', $user->id)->update([
+            DB::table($table)->where('id', $user->id)->update([
                 'Sun' => 0,
                 'Mon' => 0,
                 'Tue' => 0,
@@ -217,40 +252,42 @@ class PostController extends Controller
                 'Fri' => 0,
                 'Sat' => 0
             ]);
-            $this->save($user, $distance, $day);
+            $this->save($user, $distance, $day, $table);
         }
     }
 
 
     //요일별로 누적거리 저장하기
-    protected function save($user, $distance, $day)
+    protected function save($user, $distance, $day, $table)
     {
         //요일별로 구분
         $array_week = array("일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일");
         //날짜보고 요일 추출
         $weekday = $array_week[date('w', strtotime($day))];
 
+        // $table = 'day_records';
+
         switch ($weekday) {
             case "일요일";
-                DB::table('day_records')->where('id', $user->id)->increment('Sun', $distance);
+                DB::table('run_records')->where('id', $user->id)->increment('Sun', $distance);
                 break;
             case "월요일";
-                DB::table('day_records')->where('id', $user->id)->increment('Mon', $distance);
+                DB::table('run_records')->where('id', $user->id)->increment('Mon', $distance);
                 break;
             case "화요일";
-                DB::table('day_records')->where('id', $user->id)->increment('Tue', $distance);
+                DB::table('run_records')->where('id', $user->id)->increment('Tue', $distance);
                 break;
             case "수요일";
-                DB::table('day_records')->where('id', $user->id)->increment('Wed', $distance);
+                DB::table('run_records')->where('id', $user->id)->increment('Wed', $distance);
                 break;
             case "목요일";
-                DB::table('day_records')->where('id', $user->id)->increment('Tur', $distance);
+                DB::table('run_records')->where('id', $user->id)->increment('Tur', $distance);
                 break;
             case "금요일";
-                DB::table('day_records')->where('id', $user->id)->increment('Fri', $distance);
+                DB::table('run_records')->where('id', $user->id)->increment('Fri', $distance);
                 break;
             case "토요일";
-                DB::table('day_records')->where('id', $user->id)->increment('Sat', $distance);
+                DB::table('run_records')->where('id', $user->id)->increment('Sat', $distance);
                 break;
         };
     }

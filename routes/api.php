@@ -51,9 +51,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/show/{id}', [PostController::class, 'show']);
         Route::put('/update/{id}', [PostController::class, "update"]);
         Route::delete('/{id}', [PostController::class, "destroy"]);
+        Route::get('/weekBike', [PostController::class, "weekBike"]);
         //자전거 달리기 비율
-        Route::get('/type', [PostController::class, 'type']);
-        Route::get('/weekRecord', [PostController::class, 'weekRecord']);
+        // Route::get('/weekDistance', [PostController::class, 'weekDistance']);
     });
 
     // 팔로우
@@ -73,7 +73,8 @@ Route::middleware('auth:sanctum')->group(function () {
     //mmr
     Route::prefix('/match')->group(function () {
         Route::post('/rank', [MMRController::class, 'rank']);
-        Route::posT('/friendly', [MMRController::class, 'friendly']);
+        Route::post('/friendly', [MMRController::class, 'friendly']);
+        Route::post('/gpsData', [MMRController::class, 'gpsData']);
     });
 
 
@@ -82,6 +83,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/store', [RecordController::class, 'store'])->name('record.store');
         Route::get('/index/{id}', [RecordController::class, 'index'])->name('record.index');
         Route::get('/myIndex', [RecordController::class, 'myIndex'])->name('record.myIndex');
+        Route::get('/type', [RecordController::class, 'type']);  //자전거 달리기 비율
+        Route::get('/totalTime', [RecordController::class, 'totalTime']);
     });
 
     //랭킹조회

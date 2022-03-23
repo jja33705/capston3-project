@@ -51,6 +51,36 @@ class RecordController extends Controller
         return Record::with(['post'])->orderby('created_at', 'desc')->where('user_id', '=', $id)->paginate(5);
     }
 
+
+    public function type()
+    {
+        $user_id = Auth::user()->id;
+        $total_count = Post::where('user_id', '=', $user_id)->count();
+        $bike_count = Post::where('user_id', '=', $user_id)->where('event', '=', 'B')->count();
+
+        if ($total_count != 0) {
+            $bike_percentage = ($bike_count / $total_count) * 100;
+            $run_percentage = 100 - $bike_percentage;
+            return response([
+                '자전거 비율' => $bike_percentage,
+                '달리기 비율' => $run_percentage
+            ], 201);
+        } else {
+            return response([
+                'message' => '활동내역이 없습니다'
+            ]);
+        }
+    }
+
+
+    public function totalTime()
+    {
+        $user = Auth::user();
+        return Post::where('user_id', '=', $user->id)->get('time');
+    }
+
+
+
     //mmr상승 함수
     protected function mmr_point($request)
     {

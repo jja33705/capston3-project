@@ -29,6 +29,22 @@ class MMRController extends Controller
         return $gps_id; //이걸 node서버에 보내서 gps_data요청
     }
 
+    public function gpsData(Request $request)
+    {
+        $gpsId = $request->gpsId;
+        // //이거를 이제 mongoDB에 보내서 요청
+        // return $match_gps_id = $random_match_post->gps_id;
+
+        //Node에서 GPS_data_id를 받아와서 활동에 저장
+        $response = Http::get("http://13.124.24.179/api/gpsdata/$gpsId");
+
+        $gpsData = json_decode($response->getBody(), true);
+
+        return response([
+            'gpsData' => $gpsData
+        ], 201);
+    }
+
 
     //mmr이 비슷한 사람과 매칭 시키는 함수
     protected function random_match($request)
@@ -36,10 +52,9 @@ class MMRController extends Controller
         $track_id = $request->track_id;
         $user_mmr = Auth::user()->mmr;
         $user_id = Auth::user()->id;
-        $event = $request->event;
 
         //트랙아이디를 받아와서 해당 트랙을 달린 유저중 mmr이 비슷한 사람(mmr +10 or -10)을 탐색
-        $posts = Post::where('event', '=', $event)->where('track_id', '=', $track_id)->where('user_id', '!=', $user_id)->where('mmr', '<=', $user_mmr + 10)->where('mmr', '>=', $user_mmr - 10)->get();
+        $posts = Post::where('track_id', '=', $track_id)->where('user_id', '!=', $user_id)->where('mmr', '<=', $user_mmr + 10)->where('mmr', '>=', $user_mmr - 10)->get();
 
         //배열의 길이
         $array_length = count($posts);
@@ -61,24 +76,12 @@ class MMRController extends Controller
             return response([
                 'message' => '매칭이 완료 됐습니다',
                 'user' => $user,
-                'post' => $random_match_post
+                'post' => $random_match_post,
             ]);
         } else {
             return response([
                 'message' => '이 트랙에 매칭 할 수 있는 유저가 없습니다.'
             ]);
         }
-        // //이거를 이제 mongoDB에 보내서 요청
-        // $match_gps_id = $random_match_post->gps_id;
-
-        // //Node에서 GPS_data_id를 받아와서 활동에 저장
-        // $response = Http::get("http://13.124.24.179/api/gpsdata/$match_gps_id");
-
-        // $gpsData = json_decode($response->getBody(), true);
-
-
-        // return response([
-        //     'gpsData' => $gpsData
-        // ], 201);
     }
 }
