@@ -84,6 +84,9 @@ class AuthController extends Controller
         $keyword = $request->keyword;
 
         $user = User::where('name', 'like', '%' . $keyword . '%')->get();
-        return $user;
+        return response(
+            $user,
+            200
+        );
     }
 }
