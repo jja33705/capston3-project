@@ -132,6 +132,7 @@ class PostController extends Controller
         $user = Auth::user()->id;
         $user_id = $post->user_id;
 
+        //게시물 업데이트
         if ($user == $user_id) {
             $post->content = $request->content;
             $post->range = $request->range;
@@ -150,6 +151,7 @@ class PostController extends Controller
         $user = Auth::user()->id;
         $user_id = $post->user_id;
 
+        //게시물 삭제
         if ($user == $user_id) {
             $post->delete();
             return response([
@@ -160,15 +162,6 @@ class PostController extends Controller
         }
     }
 
-    //요일별 달린 거리
-    public function weekDistance()
-    {
-        $user = Auth::user();
-        return response([
-            '이름' => $user->name,
-            '요일별 기록' => DayRecord::where('user_id', '=', $user->id)->get()
-        ]);
-    }
 
     public function weekRecord(Request $request)
     {
@@ -199,6 +192,7 @@ class PostController extends Controller
 
 
 
+    //날짜 데이터를 보고 요일별로 나누어 요일별 누적 거리 계산
     protected function weekData($post_distance, $post_date, $count)
     {
         $array_week = array("일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일");
@@ -230,6 +224,7 @@ class PostController extends Controller
                 $Sun += $post_distance[$i]->distance;
             }
         }
+        //요일별 누적 거리
         return response([
             "Mon" => $Mon,
             "Tue" => $Tue,

@@ -5,13 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RankingController extends Controller
 {
     public function track($id)
     {
         $track_id = $id;
-        $track_ranking = Post::orderby('time')->where('track_id', '=', $track_id)->get('user_id');
+        // return $query = Post::where('track_id', '=', $id)->orderBy('time', 'DESC')->get();
+        return $query = Post::where('track_id', '=', $id)->distinct('user_id')->orderBy('time')->get();
+
+        return $track_ranking = DB::table('posts')->where('');
+
+        return $track_ranking;
 
         if ($track_ranking) {
             return response(
