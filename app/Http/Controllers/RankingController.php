@@ -6,30 +6,14 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class RankingController extends Controller
 {
     public function track($id)
     {
-        $track_id = $id;
-        // return $query = Post::where('track_id', '=', $id)->orderBy('time', 'DESC')->get();
-        return $query = Post::where('track_id', '=', $id)->groupBy('user_id')->distinct()->get();
-
-        return $track_ranking = DB::table('posts')->where('');
-
-        return $track_ranking;
-
-        if ($track_ranking) {
-            return response(
-                $track_ranking,
-                200
-            );
-        } else {
-            return response(
-                '랭킹이 없습니다',
-                204
-            );
-        }
+        $response = Http::get('http://13.124.24.179/api/track/622561232d6ee07c40f75bdc/rank');
+        return $response;
     }
 
     public function mmr()

@@ -80,6 +80,7 @@ class PostController extends Controller
             $myTime = $request->time;
             $opponentTime = Post::where('id', '=', $request->opponent_id)->first('time');
             //시간을 비교해서 mmr을 상승
+
             return $this->mmrPoint($myTime, $opponentTime);
         }
     }
@@ -247,7 +248,7 @@ class PostController extends Controller
             return response([
                 'message' => '승리하셨습니다'
             ], 200);
-        } else if ($myTime = $opponentTime) {
+        } else if ($myTime == $opponentTime->time) {
             //무승부면 mmr + 3
             DB::table('users')->where('id', $id)->increment('mmr', 3);
             return response([

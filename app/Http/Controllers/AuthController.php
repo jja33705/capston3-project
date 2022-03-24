@@ -78,4 +78,12 @@ class AuthController extends Controller
             'message' => 'Success'
         ], 201)->withCookie($cookie);
     }
+
+    public function userSearch(Request $request)
+    {
+        $keyword = $request->keyword;
+
+        $user = User::where('name', 'like', '%' . $keyword . '%')->get();
+        return $user;
+    }
 }

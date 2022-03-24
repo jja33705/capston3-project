@@ -42,6 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
     //유저확인, 로그아웃
     Route::get('user', [AuthController::class, 'user']);
     Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('userSearch', [AuthController::class, 'userSearch']);
 
     // 운동sns
     Route::prefix('post')->group(function () {
@@ -58,7 +59,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // 팔로우
     Route::post('/follow/{user}', [FollowsController::class, 'store']);
-
 
     //게시글 좋아요
     Route::post('/like/{post}', [LikeController::class, 'store']);
