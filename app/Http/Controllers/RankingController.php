@@ -13,7 +13,7 @@ class RankingController extends Controller
     {
         $track_id = $id;
         // return $query = Post::where('track_id', '=', $id)->orderBy('time', 'DESC')->get();
-        return $query = Post::where('track_id', '=', $id)->distinct('user_id')->orderBy('time')->get();
+        return $query = Post::where('track_id', '=', $id)->groupBy('user_id')->distinct()->get();
 
         return $track_ranking = DB::table('posts')->where('');
 

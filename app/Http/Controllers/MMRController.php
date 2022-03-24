@@ -51,7 +51,7 @@ class MMRController extends Controller
 
 
     //mmr이 비슷한 사람과 매칭 시키는 함수
-    protected function random_match($request)
+    public function random_match($request)
     {
         $track_id = $request->track_id;
         $user_mmr = Auth::user()->mmr;
