@@ -52,9 +52,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/show/{id}', [PostController::class, 'show']);
         Route::put('/update/{id}', [PostController::class, "update"]);
         Route::delete('/{id}', [PostController::class, "destroy"]);
+        //일주일 간격으로 요일별 누적 거리 구하는 라우터
         Route::get('/weekRecord', [PostController::class, "weekRecord"]);
-        //자전거 달리기 비율
-        // Route::get('/weekDistance', [PostController::class, 'weekDistance']);
     });
 
     // 팔로우

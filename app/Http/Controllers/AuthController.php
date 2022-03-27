@@ -76,7 +76,7 @@ class AuthController extends Controller
         $cookie = Cookie::forget('login_token');
         return response([
             'message' => 'Success'
-        ], 201)->withCookie($cookie);
+        ], 200)->withCookie($cookie);
     }
 
     public function userSearch(Request $request)

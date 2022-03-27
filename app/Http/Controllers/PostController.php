@@ -44,7 +44,7 @@ class PostController extends Controller
         $response = Http::post('http://13.124.24.179/api/gpsdata', $gpsData);
         //JSON 문자열을 변환하여 값을 추출
         $data = json_decode($response, true);
-        $gps_id = $data["gpsId"];
+        $gps_id = $data["gpsDataId"];
 
         $user = Auth::user();
 
@@ -61,6 +61,7 @@ class PostController extends Controller
         // $this->week_record($post, $user);
 
         if ($request->hasFile("image")) {
+            return $request;
             $files = $request->file("images");
             foreach ($files as $file) {
                 $imageName = time() . '_' . $file->getClientOriginalName();
@@ -107,15 +108,10 @@ class PostController extends Controller
     //내 활동내역 보기
     public function myIndex()
     {
-        // $range = $request->range;
         $user = Auth::user()->id;
-        // if ($range == 'private') {
-        //     return Post::orderby('created_at', 'desc')->where('user_id', '=', $user)->where('range', '=', 'private')->paginate(6);
-        // } else if ($range == 'public') {
-        //     return Post::orderby('created_at', 'desc')->where('user_id', '=', $user)->where('range', '=', 'public')->paginate(6);
-        // } else {  // All일 경우 다 보여주기
+
+        //최근 게시물 순으로 보여줌
         return Post::orderby('created_at', 'desc')->where('user_id', '=', $user)->paginate(5);
-        // }
     }
 
 
@@ -140,7 +136,7 @@ class PostController extends Controller
             $post->save();
             return response([
                 'message' => ['수정 완료']
-            ], 201);
+            ], 200);
         } else {
             return abort(401);
         }
@@ -157,7 +153,7 @@ class PostController extends Controller
             $post->delete();
             return response([
                 'message' => ['삭제 성공']
-            ], 201);
+            ], 200);
         } else {
             return abort(401);
         }
@@ -188,6 +184,7 @@ class PostController extends Controller
         $post_date = Post::where('user_id', '=', $user->id)->where('date', '>=', $first && 'date', '<=', $last)->where('event', '=', $event)->get('date');
         $count = Post::where('user_id', '=', $user->id)->where('date', '>=', $first && 'date', '<=', $last)->where('event', '=', $event)->count();
 
+        //요일별 저장 함수 실행
         return $this->weekData($post_distance, $post_date, $count);
     }
 
@@ -206,6 +203,7 @@ class PostController extends Controller
         $Sat = 0;
         $Sun = 0;
 
+        //반복문으로 요일별로 확인하여 누적 거리 저장
         for ($i = 0; $i < $count; $i++) {
             $day = $post_date[$i]->date;
             $weekday = $array_week[date('w', strtotime($day))];
