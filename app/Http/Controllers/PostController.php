@@ -178,15 +178,8 @@ class PostController extends Controller
         $last = date('Y-m-d', $week_last);
 
 
-        $date = Post::where('id', '=', 17)->first('date');
-        $day = $date->date;
-        return response([
-            'false' => $first <= $day,
-            'true' => $first >= $day
-        ]);
-
         $post_distance = Post::where('user_id', '=', $user->id)->where('date', '>=', $first && 'date', '<=', $last)->where('event', '=', $event)->get('distance');
-        return $post_date = Post::where('user_id', '=', $user->id)->where('date', '<=', $last)->where('date', '>=', $first)->where('event', '=', $event)->get('date');
+        return $post_date = Post::where('user_id', '=', $user->id)->where('date', '>=', $first)->where('date', '<=', $last)->where('event', '=', $event)->get('date');
         return $post_date = Post::where('user_id', '=', $user->id)->where('date', '>=', $first && 'date', '<=', $last)->where('event', '=', $event)->get('date');
         $count = Post::where('user_id', '=', $user->id)->where('date', '>=', $first && 'date', '<=', $last)->where('event', '=', $event)->count();
 
