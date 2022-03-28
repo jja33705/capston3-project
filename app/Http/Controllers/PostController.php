@@ -177,16 +177,9 @@ class PostController extends Controller
         $first = date('Y-m-d', $week_first);
         $last = date('Y-m-d', $week_last);
 
-        // $post_distance = Post::where('user_id', '=', $user->id)->where('date', '>=', $first)->where('date', '<=', $last)->where('event', '=', $event)->get('distance');
-
-        $post_distance = Post::where('user_id', '=', $user->id)->where('date', '>=', $first && 'date', '<=', $last)->where('event', '=', $event)->get('distance');
-
-        return $post_date = Post::where('user_id', '=', $user->id)->where('date', '>=', $first)->where('date', '<=', $last)->where('event', '=', $event)->get('date');
-
-        return $post_date = Post::where('user_id', '=', $user->id)->where('date', '>=', $first && 'date', '<=', $last)->where('event', '=', $event)->get('date');
-
-
-        $count = Post::where('user_id', '=', $user->id)->where('date', '>=', $first && 'date', '<=', $last)->where('event', '=', $event)->count();
+        $post_distance = Post::where('user_id', '=', $user->id)->where('date', '>=', $first)->where('date', '<=', $last)->where('event', '=', $event)->get('distance');
+        $post_date = Post::where('user_id', '=', $user->id)->where('date', '>=', $first)->where('date', '<=', $last)->where('event', '=', $event)->get('date');
+        $count = Post::where('user_id', '=', $user->id)->where('date', '>=', $first)->where('date', '<=', $last)->where('event', '=', $event)->count();
 
         //요일별 저장 함수 실행
         return $this->weekData($post_distance, $post_date, $count);
