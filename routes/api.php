@@ -93,7 +93,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('/tracks')->group(function () {
         Route::get('/', [TrackController::class, 'tracks']);
-        Route::get('/search', [TrackController::class]);
-        Route::get('/{id}', [TrackController::class]);
+        Route::get('/search', [TrackController::class], 'search');
+        Route::get('/{id}', [TrackController::class], '');
     });
 });

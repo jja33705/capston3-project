@@ -179,7 +179,7 @@ class PostController extends Controller
 
 
         $post_distance = Post::where('user_id', '=', $user->id)->where('date', '>=', $first && 'date', '<=', $last)->where('event', '=', $event)->get('distance');
-        $post_date = Post::where('user_id', '=', $user->id)->where('date', '>=', $first)->where('date', '<=', $last)->where('event', '=', $event)->get('date');
+        $post_date = Post::where('user_id', '=', $user->id)->where('date', '>=', $first && 'date', '<=', $last)->where('event', '=', $event)->get('date');
         $count = Post::where('user_id', '=', $user->id)->where('date', '>=', $first && 'date', '<=', $last)->where('event', '=', $event)->count();
 
         //요일별 저장 함수 실행
@@ -221,8 +221,9 @@ class PostController extends Controller
                 $Sun += $post_distance[$i]->distance;
             }
         }
+
         //요일별 누적 거리
-        return response([
+        $weekRecord = ([
             "Mon" => $Mon,
             "Tue" => $Tue,
             "Wed" => $Wed,
@@ -230,7 +231,22 @@ class PostController extends Controller
             "Fri" => $Fri,
             "Sat" => $Sat,
             "Sun" => $Sun
-        ], 200);
+        ]);
+
+        if ($weekRecord) {
+            return response($weekRecord, 200);
+        } else {
+            return response([
+                "Mon" => 0,
+                "Tue" => 0,
+                "Wed" => 0,
+                "Tur" => 0,
+                "Fri" => 0,
+                "Sat" => 0,
+                "Sun" => 0,
+                200
+            ]);
+        }
     }
 
 
