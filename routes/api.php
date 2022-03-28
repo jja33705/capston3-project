@@ -9,6 +9,7 @@ use App\Http\Controllers\MMRController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\RecordController;
+use App\Http\Controllers\TrackController;
 use App\Models\Comment;
 use App\Models\Record;
 use Illuminate\Http\Request;
@@ -88,5 +89,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('/ranking')->group(function () {
         Route::get('/mmr', [RankingController::class, 'mmr']);
         Route::get('/track/{id}', [RankingController::class, 'track']);
+    });
+
+    Route::prefix('/tracks')->group(function () {
+        Route::get('/', [TrackController::class, 'tracks']);
+        Route::get('/search', [TrackController::class]);
+        Route::get('/{id}', [TrackController::class]);
     });
 });

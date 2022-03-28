@@ -76,12 +76,11 @@ class PostController extends Controller
         if ($request->kind == "혼자하기") {
             return response([
                 'message' => ['혼자하기 기록을 저장했습니다']
-            ], 201);
+            ], 200);
         } else {
             $myTime = $request->time;
             $opponentTime = Post::where('id', '=', $request->opponent_id)->first('time');
             //시간을 비교해서 mmr을 상승
-
             return $this->mmrPoint($myTime, $opponentTime);
         }
     }
@@ -179,9 +178,8 @@ class PostController extends Controller
         $last = date('Y-m-d', $week_last);
 
 
-
         $post_distance = Post::where('user_id', '=', $user->id)->where('date', '>=', $first && 'date', '<=', $last)->where('event', '=', $event)->get('distance');
-        $post_date = Post::where('user_id', '=', $user->id)->where('date', '>=', $first && 'date', '<=', $last)->where('event', '=', $event)->get('date');
+        return $post_date = Post::where('user_id', '=', $user->id)->where('date', '>=', $first && 'date', '<=', $last)->where('event', '=', $event)->get('date');
         $count = Post::where('user_id', '=', $user->id)->where('date', '>=', $first && 'date', '<=', $last)->where('event', '=', $event)->count();
 
         //요일별 저장 함수 실행
