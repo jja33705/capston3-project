@@ -24,7 +24,7 @@ class TrackController extends Controller
     public function search($id)
     {
         //Node에서 track_id를 리턴
-        $response = Http::get("http://13.124.24.179/api/tracks/search/$id");
+        $response = Http::get("http://13.124.24.179/api/tracks/search?$id");
         //JSON 문자열을 변환하여 값을 추출
         return json_decode($response, true);
     }
