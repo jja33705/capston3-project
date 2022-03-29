@@ -92,8 +92,10 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('/tracks')->group(function () {
-        Route::get('/', [TrackController::class, 'tracks']);
-        Route::get('/search', [TrackController::class], 'search');
-        Route::get('/{id}', [TrackController::class], '');
+        Route::post('/', [TrackController::class, 'addTrack']);  //트랙 만들기
+        Route::get('/', [TrackController::class, 'allTracks']);  //모든 트랙 id리턴
+        Route::get('/search/{id}', [TrackController::class, 'search']);  //구간에 맞는 트랙 리턴
+        Route::get('/{id}', [TrackController::class, 'track']);  //트랙아이디로 트랙 리턴
+        Route::get('/rank/{id}', [TrackController::class, 'rank']);  //선택한 트랙의 GPSdata를 시간 순으로 정렬하고 트랙도 같이 리턴
     });
 });
