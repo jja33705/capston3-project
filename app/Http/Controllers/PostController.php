@@ -101,7 +101,7 @@ class PostController extends Controller
         }
 
         //팔로잉한 아이디의 포스트만 시간별로 출력
-        return Post::with(['user', 'likes', 'comment'])->whereIn('user_id', $array)->where('range', 'public')->orderby('created_at', 'desc')->paginate(5);
+        return Post::with(['user', 'likes', 'comment'])->whereIn('user_id', $array)->where('range', 'public')->orderby('created_at', 'desc')->paginate(10);
     }
 
     //내 활동내역 보기
@@ -260,14 +260,14 @@ class PostController extends Controller
                 'message' => '승리하셨습니다'
             ], 200);
         } else if ($myTime == $opponentTime->time) {
-            //무승부면 mmr + 3
-            DB::table('users')->where('id', $id)->increment('mmr', 3);
+            //무승부면 mmr +5
+            DB::table('users')->where('id', $id)->increment('mmr', 5);
             return response([
-                'message' => '무승부 입니다'
+                'message' => '무승부입니다'
             ], 200);
         } else {
-            //지면 mmr +1
-            DB::table('users')->where('id', $id)->increment('mmr', 1);
+            //지면 mmr +3
+            DB::table('users')->where('id', $id)->increment('mmr', 3);
             return response([
                 'message' => '패배하셨습니다'
             ], 200);
