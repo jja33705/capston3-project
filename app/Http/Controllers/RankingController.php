@@ -13,7 +13,7 @@ class RankingController extends Controller
     public function track(Request $request)
     {
         $track_id = $request->query();
-        $rank = Post::where('track_id', '=', $track_id)->orderby('time')->get();
+        $rank = Post::with('user')->where('track_id', '=', $track_id)->orderby('time')->get();
         if ($rank) {
             return response($rank, 200);
         } else {
