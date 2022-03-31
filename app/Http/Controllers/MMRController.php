@@ -16,22 +16,32 @@ class MMRController extends Controller
     public function rank(Request $request)
     {
         //랜덤매칭 함수를 호출
-        return $this->random_match($request);
+        $track_id = $request->query();
+        return $this->random_match($track_id);
     }
 
     //친선전
     public function friendly(Request $request)
     {
-        $track_id = $request->track_id;
-        $user_id = $request->user_id;
+        $track_id = $request->query('track_id');
+        $user_id = $request->query('user_id');
 
-        $gps_id = Post::where('track_id', '=', $track_id)->where('user_id', '=', $user_id)->get('gps_id');
-        return $gps_id; //이걸 node서버에 보내서 gps_data요청
+        $random_match_post = Post::where('track_id', '=', $track_id)->where('user_id', '=', $user_id)->first();
+
+
+        if ($random_match_post) {
+            return response([
+                'message' => '매칭이 완료 됐습니다',
+                'post' => $random_match_post
+            ], 200);
+        } else {
+            return response(204);
+        }
     }
 
     public function gpsData(Request $request)
     {
-        $gpsId = $request->gpsId;
+        $gpsId = $request->query('gpsId');
         // //이거를 이제 mongoDB에 보내서 요청
         // return $match_gps_id = $random_match_post->gps_id;
 
@@ -51,9 +61,8 @@ class MMRController extends Controller
 
 
     //mmr이 비슷한 사람과 매칭 시키는 함수
-    public function random_match($request)
+    public function random_match($track_id)
     {
-        $track_id = $request->track_id;
         $user_mmr = Auth::user()->mmr;
         $user_id = Auth::user()->id;
 

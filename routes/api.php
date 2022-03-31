@@ -72,9 +72,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //mmr
     Route::prefix('/match')->group(function () {
-        Route::post('/rank', [MMRController::class, 'rank']);
-        Route::post('/friendly', [MMRController::class, 'friendly']);
-        Route::post('/gpsData', [MMRController::class, 'gpsData']);
+        Route::get('/rank', [MMRController::class, 'rank']);
+        Route::get('/friendly', [MMRController::class, 'friendly']);
+        Route::get('/gpsData', [MMRController::class, 'gpsData']);
     });
 
 

@@ -77,6 +77,10 @@ class PostController extends Controller
             return response([
                 'message' => ['혼자하기 기록을 저장했습니다']
             ], 200);
+        } else if ($request->kind == "싱글") {
+            return response([
+                'message' => '싱글전 기록을 저장 했습니다.'
+            ], 200);
         } else {
             $myTime = $request->time;
             $opponentTime = Post::where('id', '=', $request->opponent_id)->first('time');
