@@ -88,7 +88,7 @@ Route::middleware('auth:sanctum')->group(function () {
     //랭킹조회
     Route::prefix('/ranking')->group(function () {
         Route::get('/mmr', [RankingController::class, 'mmr']);
-        Route::get('/track/{id}', [RankingController::class, 'track']);
+        Route::get('/track', [RankingController::class, 'track']);
     });
 
     Route::prefix('/tracks')->group(function () {

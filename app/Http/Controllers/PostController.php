@@ -40,8 +40,13 @@ class PostController extends Controller
         $gpsData["event"] = $request->event;
         $gpsData["totalTime"] = $request->time;
 
+        if ($request->track_id) {
+            $gpsData["track_id"] = $request->track_id;
+        }
+
         //Node에서 GPS_data_id를 받아와서 활동에 저장
         $response = Http::post('http://13.124.24.179/api/gpsdata', $gpsData);
+
         //JSON 문자열을 변환하여 값을 추출
         $data = json_decode($response, true);
         $gps_id = $data["gpsDataId"];

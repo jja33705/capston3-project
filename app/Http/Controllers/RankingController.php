@@ -10,10 +10,15 @@ use Illuminate\Support\Facades\Http;
 
 class RankingController extends Controller
 {
-    public function track($id)
+    public function track(Request $request)
     {
-        $response = Http::get('http://13.124.24.179/api/track/622561232d6ee07c40f75bdc/rank');
-        return $response;
+        $track_id = $request->query();
+        $rank = Post::where('track_id', '=', $track_id)->orderby('time')->get();
+        if ($rank) {
+            return response($rank, 200);
+        } else {
+            return response(['message' => '해당 트랙을 달린 유저가 존재하지 않습니다']);
+        }
     }
 
     public function mmr()
