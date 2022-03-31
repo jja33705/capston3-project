@@ -73,13 +73,17 @@ class PostController extends Controller
         }
 
 
-        if ($request->kind == "혼자하기") {
+        if ($request->kind == "자유") {
             return response([
                 'message' => ['혼자하기 기록을 저장했습니다']
             ], 200);
         } else if ($request->kind == "싱글") {
             return response([
                 'message' => '싱글전 기록을 저장 했습니다.'
+            ], 200);
+        } else if ($request->kind == "친선") {
+            return response([
+                'message' => '친선전 기록을 저장 했습니다.'
             ], 200);
         } else {
             $myTime = $request->time;
