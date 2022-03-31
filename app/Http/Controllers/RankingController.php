@@ -15,7 +15,10 @@ class RankingController extends Controller
         $track_id = $request->query();
         $rank = Post::with('user')->where('track_id', '=', $track_id)->orderby('time')->get();
         if ($rank) {
-            return response($rank, 200);
+            return response(
+                ['ranking' => $rank],
+                200
+            );
         } else {
             return response(['message' => '해당 트랙을 달린 유저가 존재하지 않습니다']);
         }
