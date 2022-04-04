@@ -47,6 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // 운동sns
     Route::prefix('post')->group(function () {
+        Route::post('/image', [PostController::class, 'image']);
         Route::post('/store', [PostController::class, 'store']);
         Route::get('/index', [PostController::class, 'index']);
         Route::get('/myIndex', [PostController::class, 'myIndex']);

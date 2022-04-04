@@ -17,6 +17,29 @@ use SebastianBergmann\Environment\Console;
 
 class PostController extends Controller
 {
+    public function image(Request $request)
+    {
+        $image = new Image();
+        $arr = array();
+
+        if ($request->hasFile("image")) {
+            $files = $request->file("image");
+            for ($i = 0; $i < count($files); $i++) {
+                $imageName = time() . '_' . $files[$i]->getClientOriginalName();
+                $image->post_id = 2;
+                $image->image = $imageName;
+                $image->save();
+            }
+            // foreach ($files as $file) {
+            // $post_id = 1;
+            // $file->move(\public_path("/images"), $imageName);
+            // $image->post_id = $post_id;
+            // $image->image = $imageName;
+            // $image->save();
+            // }
+        }
+    }
+
     public function store(Request $request)
     {
         $this->validate(
@@ -66,8 +89,7 @@ class PostController extends Controller
         // $this->week_record($post, $user);
 
         if ($request->hasFile("image")) {
-            return $request;
-            $files = $request->file("images");
+            $files = $request->file("image");
             foreach ($files as $file) {
                 $imageName = time() . '_' . $file->getClientOriginalName();
                 $request['post_id'] = $post->id;
@@ -80,7 +102,7 @@ class PostController extends Controller
 
         if ($request->kind == "자유") {
             return response([
-                'message' => ['혼자하기 기록을 저장했습니다']
+                'message' => '자유 기록을 저장했습니다'
             ], 200);
         } else if ($request->kind == "싱글") {
             return response([
@@ -123,7 +145,7 @@ class PostController extends Controller
         $user = Auth::user()->id;
 
         //최근 게시물 순으로 보여줌
-        return Post::orderby('created_at', 'desc')->where('user_id', '=', $user)->paginate(5);
+        return Post::orderby('created_at', 'desc')->where('user_id', '=', $user)->paginate(10);
     }
 
 
