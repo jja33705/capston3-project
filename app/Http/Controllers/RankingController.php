@@ -42,7 +42,7 @@ class RankingController extends Controller
         } else {
             return response([
                 'message' => '기록이 존재하지 않습니다.'
-            ], 204);
+            ], 200);
         }
     }
 
