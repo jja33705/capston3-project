@@ -90,6 +90,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('/ranking')->group(function () {
         Route::get('/mmr', [RankingController::class, 'mmr']);
         Route::get('/track', [RankingController::class, 'track']);
+        Route::get('/myRank', [RankingController::class, 'myRank']);
     });
 
     Route::prefix('/tracks')->group(function () {

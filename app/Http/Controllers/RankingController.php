@@ -5,15 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 class RankingController extends Controller
 {
+    //private빼기
     public function track(Request $request)
     {
         $track_id = $request->query();
-        $rank = Post::with('user')->where('track_id', '=', $track_id)->orderby('time')->get();
+        $rank = Post::with('user')->where('track_id', '=', $track_id)->where('range', '=', 'public')->orderby('time')->get();
         if ($rank) {
             return response(
                 ['ranking' => $rank],
@@ -24,10 +26,31 @@ class RankingController extends Controller
         }
     }
 
+
+    public function myRank(Request $request)
+    {
+        $track_id = $request->query('track_id');
+        $user_id = Auth::user()->id;
+
+        $post = Post::where('track_id', '=', $track_id)->where('user_id', '=', $user_id)->orderby('time')->first('time');
+
+        if ($post) {
+            return response(
+                Post::where('track_id', '=', $track_id)->where('time', '<=', $post->time)->count(),
+                200
+            );
+        } else {
+            return response([
+                'message' => '기록이 존재하지 않습니다.'
+            ], 204);
+        }
+    }
+
+    //전체 mmr랭킹
     public function mmr()
     {
         return response(
-            User::orderby('mmr', 'desc')->get('id'),
+            User::orderby('mmr', 'desc')->get(),
             200
         );
     }
