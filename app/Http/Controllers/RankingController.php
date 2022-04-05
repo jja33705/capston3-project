@@ -30,15 +30,15 @@ class RankingController extends Controller
     public function myRank(Request $request)
     {
         $track_id = $request->query('track_id');
-        $user_id = Auth::user()->id;
+        $user = Auth::user();
 
-        $post = Post::where('track_id', '=', $track_id)->where('user_id', '=', $user_id)->orderby('time')->first('time');
+        $post = Post::where('track_id', '=', $track_id)->where('user_id', '=', $user->id)->orderby('time')->first('time');
 
         if ($post) {
-            return response(
-                Post::where('track_id', '=', $track_id)->where('time', '<=', $post->time)->count(),
-                200
-            );
+            return response([
+                "user" => $user,
+                "rank" => Post::where('track_id', '=', $track_id)->where('time', '<=', $post->time)->count()
+            ], 200);
         } else {
             return response([
                 'message' => '기록이 존재하지 않습니다.'
