@@ -32,11 +32,11 @@ class RankingController extends Controller
         $track_id = $request->query('track_id');
         $user = Auth::user();
 
-        $post = Post::where('track_id', '=', $track_id)->where('user_id', '=', $user->id)->orderby('time')->first('time');
+        $post = Post::where('track_id', '=', $track_id)->where('user_id', '=', $user->id)->orderby('time')->first();
 
         if ($post) {
             return response([
-                "user" => $user,
+                "post" => $post,
                 "rank" => Post::where('track_id', '=', $track_id)->where('time', '<=', $post->time)->count()
             ], 200);
         } else {
