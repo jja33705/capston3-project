@@ -29,7 +29,7 @@ class RecordController extends Controller
         } else {
             return response([
                 'message' => '활동내역이 없습니다'
-            ], 204);
+            ], 200);
         }
     }
 
@@ -53,7 +53,7 @@ class RecordController extends Controller
         } else {
             return response(
                 '누적 시간이 없습니다',
-                204
+                200
             );
         }
     }
@@ -79,7 +79,7 @@ class RecordController extends Controller
         } else {
             return response(
                 '누적 칼로리가 없습니다',
-                204
+                200
             );
         }
     }

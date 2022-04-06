@@ -22,7 +22,7 @@ class RankingController extends Controller
                 200
             );
         } else {
-            return response(['message' => '해당 트랙을 달린 유저가 존재하지 않습니다']);
+            return response(['message' => '해당 트랙을 달린 유저가 존재하지 않습니다'], 200);
         }
     }
 

@@ -13,31 +13,25 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use SebastianBergmann\Environment\Console;
 
 class PostController extends Controller
 {
     public function image(Request $request)
     {
-        $image = new Image();
-        $arr = array();
-
-        if ($request->hasFile("image")) {
-            $files = $request->file("image");
-            for ($i = 0; $i < count($files); $i++) {
-                $imageName = time() . '_' . $files[$i]->getClientOriginalName();
-                $image->post_id = 2;
-                $image->image = $imageName;
-                $image->save();
+        if ($request->hasFile("images")) {
+            for ($i = 0; $i < count($request->images); $i++) {
+                $path[$i] = $request->images[$i]->store('image', 's3');
+                $image = Image::create([
+                    'image' => basename($path[$i]),
+                    'url' => Storage::url($path[$i]),
+                    'post_id' => 1
+                ]);
             }
-            // foreach ($files as $file) {
-            // $post_id = 1;
-            // $file->move(\public_path("/images"), $imageName);
-            // $image->post_id = $post_id;
-            // $image->image = $imageName;
-            // $image->save();
-            // }
         }
+        // 이제 Read/Update/Delete를 할 수 있게 하면된다.
+        return $image;
     }
 
     public function store(Request $request)
@@ -165,6 +159,7 @@ class PostController extends Controller
 
         //게시물 업데이트
         if ($user == $user_id) {
+            $post->title = $request->title;
             $post->content = $request->content;
             $post->range = $request->range;
             $post->save();
