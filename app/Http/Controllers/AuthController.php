@@ -85,7 +85,7 @@ class AuthController extends Controller
     {
         $keyword = $request->keyword;
 
-        $user = User::where('name', 'like', '%' . $keyword . '%')->get();
+        $user = User::where('name', 'like', '%' . $keyword . '%')->paginate(10);
         return response(
             $user,
             200

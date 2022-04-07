@@ -139,7 +139,7 @@ class PostController extends Controller
         $user = Auth::user()->id;
 
         //최근 게시물 순으로 보여줌
-        return Post::orderby('created_at', 'desc')->where('user_id', '=', $user)->paginate(10);
+        return Post::with(['user', 'likes', 'comment'])->orderby('created_at', 'desc')->where('user_id', '=', $user)->paginate(10);
     }
 
 

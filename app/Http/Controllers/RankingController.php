@@ -16,21 +16,23 @@ class RankingController extends Controller
     {
         $track_id = $request->query();
 
-        // return $query = DB::table('posts')->where('track_id', '=', $track_id)->
-
         $query = DB::table('posts')->where('track_id', '=', $track_id)->where('kind', '=', '랭크')->select('user_id', DB::raw('MIN(time) as time'))->groupBy('user_id')->orderBy('time')->get();
 
-
-        $rank = array();
+        $data = array();
+        $data2 = array();
 
         for ($i = 0; $i < count($query); $i++) {
-            array_push($rank, Post::with('user')->where('user_id', '=', $query[$i]->user_id)->where('time', '=', $query[$i]->time)->first());
+            array_push($data, Post::where('user_id', '=', $query[$i]->user_id)->where('time', '=', $query[$i]->time)->first('id'));
+            array_push($data2, $data[$i]->id);
         }
 
+        $rank = Post::with('user')->whereIn('id', $data2)->orderBy('time')->paginate(10);
+
         if ($rank) {
-            return response([
-                'data' => $rank
-            ]);
+            return response(
+                $rank,
+                200
+            );
         } else {
             return response([
                 'data' => [
