@@ -44,7 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', [AuthController::class, 'user']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('userSearch', [AuthController::class, 'userSearch']);
-    Route::put('/profile/{id}', [AuthController::class, 'profile']);
+    Route::put('/profile', [AuthController::class, 'profile']);
 
     // 운동sns
     Route::prefix('post')->group(function () {

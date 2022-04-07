@@ -163,7 +163,7 @@ class PostController extends Controller
             $post->content = $request->content;
             $post->range = $request->range;
             $post->save();
-            return redirect()->route('post.myIndex');
+            return $post->id;
         } else {
             return abort(401);
         }
@@ -178,7 +178,7 @@ class PostController extends Controller
         //게시물 삭제
         if ($user == $user_id) {
             $post->delete();
-            return redirect()->route('post.myIndex');
+            return $post->id;
         } else {
             return abort(401);
         }

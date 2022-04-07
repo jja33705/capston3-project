@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\DayRecord;
+use App\Models\Image;
 use App\Models\RunRecord;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
@@ -90,10 +92,28 @@ class AuthController extends Controller
         );
     }
 
-    public function profile(Request $request, $id)
+    public function profile(Request $request)
     {
-        $user = User::find($id);
-        return $user->name;
+        $user = Auth::user();
+        // $user = User::find($user_id);
+
+        // $user->name = $request->name;
+        // $user->weight = $request->weight;
+        // $user->birth = $request->birth;
+        // $user->introduce = $request->introduce;
+        // $user->location = $request->location;
+
+        if ($request->hasFile("profile")) {
+            for ($i = 0; $i < count($request->profile); $i++) {
+                $path[$i] = $request->profile[$i]->store('profile', 's3');
+                $user->profile = Storage::url($path[$i]);
+            }
+        };
+
+        $user->save();
+
+        return $user;
+        // 이제 Read/Update/Delete를 할 수 있게 하면된다.
     }
 
     public function update(Request $request, $id)
