@@ -24,7 +24,7 @@ class RankingController extends Controller
         $rank = array();
 
         for ($i = 0; $i < count($query); $i++) {
-            array_push($rank, Post::where('user_id', '=', $query[$i]->user_id)->where('time', '=', $query[$i]->time)->first());
+            array_push($rank, Post::with('user')->where('user_id', '=', $query[$i]->user_id)->where('time', '=', $query[$i]->time)->first());
         }
 
         if ($rank) {
