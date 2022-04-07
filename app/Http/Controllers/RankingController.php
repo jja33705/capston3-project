@@ -15,7 +15,31 @@ class RankingController extends Controller
     public function track(Request $request)
     {
         $track_id = $request->query();
-        $rank = Post::with('user')->where('track_id', '=', $track_id)->where('range', '=', 'public')->orderby('time')->get();
+
+        // return $query = DB::table('posts')->where('track_id', '=', $track_id)->
+
+        $query = DB::table('posts')->where('track_id', '=', $track_id)->where('kind', '=', '랭크')->select('user_id', DB::raw('MIN(time) as time'))->groupBy('user_id')->orderBy('time')->get();
+
+        $rank = array();
+
+        for ($i = 0; $i < count($query); $i++) {
+            array_push($rank, $i + 1, Post::where('user_id', '=', $query[$i]->user_id)->where('time', '=', $query[$i]->time)->first());
+        }
+        return $rank;
+
+
+
+        // return $query[1]->user_id;
+
+
+
+
+        return $query = DB::table('posts')->select('time', 'user_id')->where('track_id', '=', $track_id)
+            ->where('range', '=', 'public')->groupBy('time')->orderBy('time')->get();
+
+
+        return $rank = Post::where('track_id', '=', $track_id)->where('range', '=', 'public')->orderby('time')->get('user_id');
+
         if ($rank) {
             return response(
                 ['ranking' => $rank],
