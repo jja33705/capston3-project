@@ -89,4 +89,38 @@ class AuthController extends Controller
             200
         );
     }
+
+    public function profile(Request $request, $id)
+    {
+        $user = User::find($id);
+        return $user->name;
+    }
+
+    public function update(Request $request, $id)
+    {
+        $this->validate(
+            $request,
+            [
+                'content' => 'required',
+                'range' => 'required',
+            ]
+        );
+
+        $post = Post::find($id);
+        $user = Auth::user()->id;
+        $user_id = $post->user_id;
+
+        //게시물 업데이트
+        if ($user == $user_id) {
+            $post->title = $request->title;
+            $post->content = $request->content;
+            $post->range = $request->range;
+            $post->save();
+            return response([
+                'message' => ['수정 완료']
+            ], 200);
+        } else {
+            return abort(401);
+        }
+    }
 }

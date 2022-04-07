@@ -97,15 +97,15 @@ class PostController extends Controller
         if ($request->kind == "자유") {
             return response([
                 'message' => '자유 기록을 저장했습니다'
-            ], 200);
+            ], 201);
         } else if ($request->kind == "싱글") {
             return response([
                 'message' => '싱글전 기록을 저장 했습니다.'
-            ], 200);
+            ], 201);
         } else if ($request->kind == "친선") {
             return response([
                 'message' => '친선전 기록을 저장 했습니다.'
-            ], 200);
+            ], 201);
         } else {
             $myTime = $request->time;
             $opponentTime = Post::where('id', '=', $request->opponent_id)->first('time');
@@ -163,9 +163,7 @@ class PostController extends Controller
             $post->content = $request->content;
             $post->range = $request->range;
             $post->save();
-            return response([
-                'message' => ['수정 완료']
-            ], 200);
+            return redirect()->route('post.myIndex');
         } else {
             return abort(401);
         }
@@ -180,9 +178,7 @@ class PostController extends Controller
         //게시물 삭제
         if ($user == $user_id) {
             $post->delete();
-            return response([
-                'message' => ['삭제 성공']
-            ], 200);
+            return redirect()->route('post.myIndex');
         } else {
             return abort(401);
         }

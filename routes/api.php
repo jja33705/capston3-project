@@ -40,17 +40,18 @@ Route::get('/auth/login/google/callback', [GoogleAuthController::class, 'callbac
 
 //현재로그인 확인
 Route::middleware('auth:sanctum')->group(function () {
-    //유저확인, 로그아웃
+    //유저확인, 로그아웃, 유저검색, 프로필편집
     Route::get('user', [AuthController::class, 'user']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('userSearch', [AuthController::class, 'userSearch']);
+    Route::put('/profile/{id}', [AuthController::class, 'profile']);
 
     // 운동sns
     Route::prefix('post')->group(function () {
         Route::post('/image', [PostController::class, 'image']);
         Route::post('/store', [PostController::class, 'store']);
-        Route::get('/index', [PostController::class, 'index']);
-        Route::get('/myIndex', [PostController::class, 'myIndex']);
+        Route::get('/index', [PostController::class, 'index'])->name('post.index');
+        Route::get('/myIndex', [PostController::class, 'myIndex'])->name('post.myIndex');
         Route::get('/show/{id}', [PostController::class, 'show']);
         Route::put('/update/{id}', [PostController::class, "update"]);
         Route::delete('/{id}', [PostController::class, "destroy"]);
