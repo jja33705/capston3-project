@@ -148,7 +148,7 @@ class PostController extends Controller
                 200
             );
         } else {
-            return 204;
+            return response('', 204);
         }
     }
 
@@ -178,7 +178,7 @@ class PostController extends Controller
                 200
             );
         } else {
-            return 204;
+            return response('', 204);
         }
     }
 
@@ -250,6 +250,32 @@ class PostController extends Controller
         //요일별 저장 함수 실행
         return $this->weekData($post_distance, $post_date, $count);
     }
+
+    public function goal(Request $request)
+    {
+        //날짜 입력 받기
+        //그 날짜 범위의 활동만 주행거리로 누적
+        //날짜 지정
+        //목표테이블
+        //달성하면 달성 메세지 출력
+        $firstDay = $request->firstDay;
+        $lastDay = $request->lastDay;
+        $myGoal = $request->myGoal;
+
+        $user = Auth::user();
+
+        $post = Post::where('user_id', '=', $user->id)->where('date', '>=', $firstDay)->where('date', '<=', $lastDay)->get();
+
+        $goal = 0;
+        for ($i = 0; $i < count($post); $i++) {
+            $goal += $post[$i]->distance;
+        }
+        return $goal;
+    }
+
+    // public function
+
+
 
 
 

@@ -27,7 +27,7 @@ class RecordController extends Controller
                 'R' => $run_percentage
             ], 200);
         } else {
-            return response(204);
+            return response('', 204);
         }
     }
 
@@ -50,6 +50,7 @@ class RecordController extends Controller
             );
         } else {
             return response(
+                '',
                 204
             );
         }
@@ -75,6 +76,7 @@ class RecordController extends Controller
             );
         } else {
             return response(
+                '',
                 204
             );
         }

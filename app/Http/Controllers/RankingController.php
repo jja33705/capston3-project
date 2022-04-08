@@ -35,7 +35,7 @@ class RankingController extends Controller
                 200
             );
         } else {
-            return response(204);
+            return response('', 204);
         }
     }
 
@@ -53,7 +53,7 @@ class RankingController extends Controller
                 "rank" => Post::where('track_id', '=', $track_id)->where('time', '<=', $post->time)->count()
             ], 200);
         } else {
-            return response(204);
+            return response('', 204);
         }
     }
 
@@ -77,7 +77,7 @@ class RankingController extends Controller
                 200
             );
         } else {
-            return response(204);
+            return response('', 204);
         }
     }
 
@@ -92,7 +92,7 @@ class RankingController extends Controller
                 200
             );
         } else {
-            return response(204);
+            return response('', 204);
         }
     }
 }

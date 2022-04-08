@@ -35,7 +35,7 @@ class MMRController extends Controller
                 'post' => $random_match_post
             ], 200);
         } else {
-            return response(204);
+            return response('', 204);
         }
     }
 
@@ -55,7 +55,7 @@ class MMRController extends Controller
                 'gpsData' => $gpsData
             ], 200);
         } else {
-            return response(204);
+            return response('', 204);
         }
     }
 
