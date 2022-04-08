@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Follow;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -60,6 +61,21 @@ class RankingController extends Controller
                 'message' => '기록이 존재하지 않습니다.'
             ], 200);
         }
+    }
+
+    public function followRank()
+    {
+        $user = Auth::user();
+        $data = Follow::where('follower_id', '=', $user->id)->get('following_id');
+
+        $followings = array();
+
+        for ($i = 0; $i < count($data); $i++) {
+            array_push($followings, $data[$i]->following_id);
+        }
+        array_push($followings, $user->id);
+
+        return User::whereIn('id', $followings)->orderBy('mmr', 'desc')->get();
     }
 
     //전체 mmr랭킹
