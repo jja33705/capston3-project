@@ -23,8 +23,8 @@ class RecordController extends Controller
             $bike_percentage = ($bike_count / $total_count) * 100;
             $run_percentage = 100 - $bike_percentage;
             return response([
-                '자전거 비율' => $bike_percentage,
-                '달리기 비율' => $run_percentage
+                'B' => $bike_percentage,
+                'R' => $run_percentage
             ], 200);
         } else {
             return response([
