@@ -133,18 +133,7 @@ class PostController extends Controller
         $post = Post::with(['user', 'likes', 'comment'])->whereIn('user_id', $array)->where('range', 'public')->orderby('created_at', 'desc')->paginate(10);
 
 
-        // $user = Auth::user();
-        // $gpsData = $request->gpsData;
-        // $gpsData["userId"] = $user->id;
-        // $gpsData["name"] = $user->name;
-        // $gpsData["event"] = $request->event;
-        // $gpsData["totalTime"] = $request->time;
-
-        // if ($request->track_id) {
-        //     $gpsData["track_id"] = $request->track_id;
-        // }
-
-
+        //gpsData를 요청해서 같이 묶어서 보내줘야함
         for ($i = 0; $i < $post->count(); $i++) {
             $gpsId = $post[$i]->gps_id;
             $response = Http::get("http://13.124.24.179/api/gpsdata/$gpsId");
@@ -169,7 +158,28 @@ class PostController extends Controller
         $user = Auth::user()->id;
 
         //최근 게시물 순으로 보여줌
-        return Post::with(['user', 'likes', 'comment'])->orderby('created_at', 'desc')->where('user_id', '=', $user)->paginate(10);
+        $post = Post::with(['user', 'likes', 'comment'])->orderby('created_at', 'desc')->where('user_id', '=', $user)->paginate(10);
+
+        //gpsData를 요청해서 같이 묶어서 보내줘야함
+        $gpsData = array();
+        for ($i = 0; $i < $post->count(); $i++) {
+            $gpsId = $post[$i]->gps_id;
+            $response = Http::get("http://13.124.24.179/api/gpsdata/$gpsId");
+            $data = json_decode($response->getBody(), true);
+            array_push($gpsData, $data);
+            $post[$i]["gpsData"] = $gpsData[$i];
+        }
+
+        $post[0]["gpsData"] = $gpsData[0];
+
+        if ($post) {
+            return response(
+                $post,
+                200
+            );
+        } else {
+            return 204;
+        }
     }
 
 
