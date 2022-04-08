@@ -132,18 +132,35 @@ class PostController extends Controller
         //팔로잉한 아이디의 포스트만 시간별로 출력
         $post = Post::with(['user', 'likes', 'comment'])->whereIn('user_id', $array)->where('range', 'public')->orderby('created_at', 'desc')->paginate(10);
 
-        // return $post;
 
-        for ($i = 0; $i < $array_length; $i++) {
-            $gpsId = $post[0]->gps_id;
+        // $user = Auth::user();
+        // $gpsData = $request->gpsData;
+        // $gpsData["userId"] = $user->id;
+        // $gpsData["name"] = $user->name;
+        // $gpsData["event"] = $request->event;
+        // $gpsData["totalTime"] = $request->time;
+
+        // if ($request->track_id) {
+        //     $gpsData["track_id"] = $request->track_id;
+        // }
+
+
+        for ($i = 0; $i < $post->count(); $i++) {
+            $gpsId = $post[$i]->gps_id;
             $response = Http::get("http://13.124.24.179/api/gpsdata/$gpsId");
             $data = json_decode($response->getBody(), true);
             array_push($gpsData, $data);
+            $post[$i]["gpsData"] = $gpsData[$i];
         }
-        return response(
-            $post,
-            200
-        );
+
+        if ($post) {
+            return response(
+                $post,
+                200
+            );
+        } else {
+            return 204;
+        }
     }
 
     //내 활동내역 보기
