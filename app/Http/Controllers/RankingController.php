@@ -29,7 +29,7 @@ class RankingController extends Controller
 
         $rank = Post::with('user')->whereIn('id', $data2)->orderBy('time')->paginate(10);
 
-        if ($rank) {
+        if ($data) {
             return response(
                 $rank,
                 200

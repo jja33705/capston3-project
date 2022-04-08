@@ -123,14 +123,25 @@ class PostController extends Controller
         $followings = Follow::where('follower_id', '=', $id)->get('following_id');
         $array_length = count($followings);
         $array = array();
+        $gpsData = array();
 
         //배열에 팔로잉한 아이디 push
         for ($i = 0; $i < $array_length; $i++) {
             array_push($array, $followings[$i]->following_id);
         }
-
         //팔로잉한 아이디의 포스트만 시간별로 출력
-        return Post::with(['user', 'likes', 'comment'])->whereIn('user_id', $array)->where('range', 'public')->orderby('created_at', 'desc')->paginate(10);
+        $post = Post::with(['user', 'likes', 'comment'])->whereIn('user_id', $array)->where('range', 'public')->orderby('created_at', 'desc')->paginate(10);
+
+        for ($i = 0; $i < $array_length; $i++) {
+            $gpsId = $post[0]->gps_id;
+            $response = Http::get("http://13.124.24.179/api/gpsdata/$gpsId");
+            $data = json_decode($response->getBody(), true);
+            array_push($gpsData, $data);
+        }
+        return response([
+            "gpsData" => $gpsData[0],
+            "post" => $post[0]
+        ]);
     }
 
     //내 활동내역 보기
