@@ -129,13 +129,8 @@ class PostController extends Controller
             array_push($array, $followings[$i]->following_id);
         }
 
-        $post = array();
         //팔로잉한 아이디의 포스트만 시간별로 출력
-        Post::with(['user', 'likes', 'comment'])->whereIn('user_id', $array)->where('range', 'public')->orderby('created_at', 'desc')->paginate(10);
-
-        return response([
-            'post' => $post,
-        ]);
+        return Post::with(['user', 'likes', 'comment'])->whereIn('user_id', $array)->where('range', 'public')->orderby('created_at', 'desc')->paginate(10);
     }
 
     //내 활동내역 보기
