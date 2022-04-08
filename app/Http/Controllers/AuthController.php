@@ -70,6 +70,7 @@ class AuthController extends Controller
         return User::with(['followings', 'followers', 'posts'])->find($user_id);
     }
 
+
     public function logout()
     {
         $user = Auth::user();

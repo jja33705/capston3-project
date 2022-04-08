@@ -35,11 +35,7 @@ class RankingController extends Controller
                 200
             );
         } else {
-            return response([
-                'data' => [
-                    'message' => '해당 트랙을 달린 유저가 존재하지 않습니다'
-                ]
-            ]);
+            return response(204);
         }
     }
 
@@ -57,9 +53,7 @@ class RankingController extends Controller
                 "rank" => Post::where('track_id', '=', $track_id)->where('time', '<=', $post->time)->count()
             ], 200);
         } else {
-            return response([
-                'message' => '기록이 존재하지 않습니다.'
-            ], 200);
+            return response(204);
         }
     }
 
@@ -75,15 +69,30 @@ class RankingController extends Controller
         }
         array_push($followings, $user->id);
 
-        return User::whereIn('id', $followings)->orderBy('mmr', 'desc')->get();
+        $rank = User::whereIn('id', $followings)->orderBy('mmr', 'desc')->get();
+
+        if ($rank) {
+            return response(
+                $rank,
+                200
+            );
+        } else {
+            return response(204);
+        }
     }
 
     //전체 mmr랭킹
     public function mmr()
     {
-        return response(
-            User::orderby('mmr', 'desc')->get(),
-            200
-        );
+        $rank = User::orderby('mmr', 'desc')->get();
+
+        if ($rank) {
+            return response(
+                $rank,
+                200
+            );
+        } else {
+            return response(204);
+        }
     }
 }
