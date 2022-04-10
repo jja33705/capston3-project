@@ -77,38 +77,36 @@ class PostController extends Controller
             ["date" => Carbon::now()->format('Y-m-d')],
             ["gps_id" => $gps_id],  //노드에서 받아와야할 정보
         );
-        $post = Post::create($input);
 
         //요일별로 누적 거리 저장
         // $this->week_record($post, $user);
 
-        if ($request->hasFile("image")) {
-            $files = $request->file("image");
-            foreach ($files as $file) {
-                $imageName = time() . '_' . $file->getClientOriginalName();
-                $request['post_id'] = $post->id;
-                $request['image'] = $imageName;
-                $file->move(\public_path("/images"), $imageName);
-                Image::create($request->all());
-            }
-        }
-
 
         if ($request->kind == "자유") {
             return response([
+                $post = Post::create($input),
+                $this->saveImage($request, $post),
                 'message' => '자유 기록을 저장했습니다'
             ], 201);
         } else if ($request->kind == "싱글") {
             return response([
+                $post = Post::create($input),
+                $this->saveImage($request, $post),
                 'message' => '싱글전 기록을 저장 했습니다.'
             ], 201);
         } else if ($request->kind == "친선") {
             return response([
+                $post = Post::create($input),
+                $this->saveImage($request, $post),
                 'message' => '친선전 기록을 저장 했습니다.'
             ], 201);
         } else {
             $myTime = $request->time;
             $opponentTime = Post::where('id', '=', $request->opponent_id)->first('time');
+            if ($opponentTime) {
+                $post = Post::create($input);
+                $this->saveImage($request, $post);
+            }
             //시간을 비교해서 mmr을 상승
             return $this->mmrPoint($myTime, $opponentTime);
         }
@@ -273,9 +271,6 @@ class PostController extends Controller
         return $goal;
     }
 
-    // public function
-
-
 
 
 
@@ -363,6 +358,20 @@ class PostController extends Controller
             return response([
                 'message' => '패배하셨습니다'
             ], 200);
+        }
+    }
+
+    protected function saveImage($request, $post)
+    {
+        if ($request->hasFile("image")) {
+            $files = $request->file("image");
+            foreach ($files as $file) {
+                $imageName = time() . '_' . $file->getClientOriginalName();
+                $request['post_id'] = $post->id;
+                $request['image'] = $imageName;
+                $file->move(\public_path("/images"), $imageName);
+                Image::create($request->all());
+            }
         }
     }
 }
