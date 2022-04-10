@@ -83,21 +83,21 @@ class PostController extends Controller
 
 
         if ($request->kind == "자유") {
+            $post = Post::create($input);
+            $this->saveImage($request, $post);
             return response([
-                $post = Post::create($input),
-                $this->saveImage($request, $post),
                 'message' => '자유 기록을 저장했습니다'
             ], 201);
         } else if ($request->kind == "싱글") {
+            $post = Post::create($input);
+            $this->saveImage($request, $post);
             return response([
-                $post = Post::create($input),
-                $this->saveImage($request, $post),
                 'message' => '싱글전 기록을 저장 했습니다.'
             ], 201);
         } else if ($request->kind == "친선") {
+            $post = Post::create($input);
+            $this->saveImage($request, $post);
             return response([
-                $post = Post::create($input),
-                $this->saveImage($request, $post),
                 'message' => '친선전 기록을 저장 했습니다.'
             ], 201);
         } else {
