@@ -25,7 +25,7 @@ class PostController extends Controller
         if ($request->hasFile("img")) {
             for ($i = 0; $i < count($request->img); $i++) {
                 $path[$i] = $request->img[$i]->store('image', 's3');
-                $image = Image::create([
+                Image::create([
                     'image' => basename($path[$i]),
                     'url' => Storage::url($path[$i]),
                     'post_id' => 1
@@ -95,12 +95,9 @@ class PostController extends Controller
 
 
         if ($request->kind == "자유") {
-            return $request;
             if ($request->hasFile('img')) {
-                return "이미지 왔음";
                 $this->saveImage($request, $input);
             } else {
-                return "이미지 안옴";
                 Post::create($input);
             }
             return response([
