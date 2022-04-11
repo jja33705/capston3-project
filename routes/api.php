@@ -6,6 +6,7 @@ use App\Http\Controllers\FollowsController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MMRController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\RecordController;
@@ -46,6 +47,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('userSearch', [AuthController::class, 'userSearch']);
     Route::post('/profile', [AuthController::class, 'profile']);
+    Route::get('/markAsRead', function () {
+        return auth()->user()->unReadNotifications->markAsRead();
+    });
 
     // 운동sns
     Route::prefix('post')->group(function () {
@@ -103,4 +107,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/search', [TrackController::class, 'search']);  //구간에 맞는 트랙 리턴
         Route::get('/', [TrackController::class, 'track']);  //트랙아이디로 트랙 리턴
     });
+
+    Route::get('/unReadNotifications', [NotificationController::class, 'unReadNotifications']);
+    Route::get('/ReadNotifications', [NotificationController::class, 'ReadNotifications']);
 });

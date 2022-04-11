@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+use App\Notifications\InvoicePaid;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    User::find(1)->notify(new InvoicePaid);
     return view('welcome');
 });
 

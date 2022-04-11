@@ -20,9 +20,9 @@ class PostController extends Controller
 {
     public function image(Request $request)
     {
-        if ($request->hasFile("images")) {
-            for ($i = 0; $i < count($request->images); $i++) {
-                $path[$i] = $request->images[$i]->store('image', 's3');
+        if ($request->hasFile("img")) {
+            for ($i = 0; $i < count($request->img); $i++) {
+                $path[$i] = $request->img[$i]->store('image', 's3');
                 $image = Image::create([
                     'image' => basename($path[$i]),
                     'url' => Storage::url($path[$i]),
@@ -30,8 +30,6 @@ class PostController extends Controller
                 ]);
             }
         }
-        // 이제 Read/Update/Delete를 할 수 있게 하면된다.
-        return $image;
     }
 
     public function store(Request $request)
@@ -77,9 +75,6 @@ class PostController extends Controller
             ["date" => Carbon::now()->format('Y-m-d')],
             ["gps_id" => $gps_id],  //노드에서 받아와야할 정보
         );
-
-        //요일별로 누적 거리 저장
-        // $this->week_record($post, $user);
 
 
         if ($request->kind == "자유") {
@@ -363,14 +358,14 @@ class PostController extends Controller
 
     protected function saveImage($request, $post)
     {
-        if ($request->hasFile("image")) {
-            $files = $request->file("image");
-            foreach ($files as $file) {
-                $imageName = time() . '_' . $file->getClientOriginalName();
-                $request['post_id'] = $post->id;
-                $request['image'] = $imageName;
-                $file->move(\public_path("/images"), $imageName);
-                Image::create($request->all());
+        if ($request->hasFile("img")) {
+            for ($i = 0; $i < count($request->img); $i++) {
+                $path[$i] = $request->img[$i]->store('image', 's3');
+                Image::create([
+                    'image' => basename($path[$i]),
+                    'url' => Storage::url($path[$i]),
+                    'post_id' => $post->id
+                ]);
             }
         }
     }
