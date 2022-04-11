@@ -95,6 +95,7 @@ class PostController extends Controller
 
 
         if ($request->kind == "자유") {
+            return $request;
             if ($request->hasFile('img')) {
                 return "이미지 왔음";
                 $this->saveImage($request, $input);
