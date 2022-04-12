@@ -149,6 +149,9 @@ class PostController extends Controller
         for ($i = 0; $i < $array_length; $i++) {
             array_push($array, $followings[$i]->following_id);
         }
+
+        array_push($array, $id);
+
         //팔로잉한 아이디의 포스트만 시간별로 출력
         $post = Post::with(['user', 'likes', 'comment'])->whereIn('user_id', $array)->where('range', 'public')->orderby('created_at', 'desc')->paginate(10);
 
@@ -263,12 +266,97 @@ class PostController extends Controller
         $first = date('Y-m-d', $week_first);
         $last = date('Y-m-d', $week_last);
 
-        $post_distance = Post::where('user_id', '=', $user->id)->where('date', '>=', $first)->where('date', '<=', $last)->where('event', '=', $event)->get('distance');
-        $post_date = Post::where('user_id', '=', $user->id)->where('date', '>=', $first)->where('date', '<=', $last)->where('event', '=', $event)->get('date');
-        $count = Post::where('user_id', '=', $user->id)->where('date', '>=', $first)->where('date', '<=', $last)->where('event', '=', $event)->count();
+        $day = time();
+        $one = $today - 86400;
+        $two = $one - 86400;
+        $three = $two - 86400;
+        $four = $three - 86400;
+        $five = $four - 86400;
+        $six = $five - 86400;
 
-        //요일별 저장 함수 실행
-        return $this->weekData($post_distance, $post_date, $count);
+        $day2 = date('Y-m-d', time());
+        $one2 = date('Y-m-d', $today - 86400);
+        $two2 = date('Y-m-d', $one - 86400);
+        $three2 = date('Y-m-d', $two - 86400);
+        $four2 = date('Y-m-d', $three - 86400);
+        $five2 = date('Y-m-d', $four - 86400);
+        $six2 = date('Y-m-d', $five - 86400);
+
+
+        $today = 0;
+        $oneDayAgo = 0;
+        $twoDayAgo = 0;
+        $threeDayAgo = 0;
+        $fourDayAgo = 0;
+        $fiveDayAgo = 0;
+        $sixDayAgo = 0;
+
+        $day3 = Post::where('user_id', '=', $user->id)->where('date', '=', $day2)->where('event', '=', $event)->get('distance');
+
+        $one3 = Post::where('user_id', '=', $user->id)->where('date', '=', $one2)->where('event', '=', $event)->get('distance');
+
+        $two3 = Post::where('user_id', '=', $user->id)->where('date', '=', $two2)->where('event', '=', $event)->get('distance');
+
+        $three3 = Post::where('user_id', '=', $user->id)->where('date', '=', $three2)->where('event', '=', $event)->get('distance');
+
+        $four3 = Post::where('user_id', '=', $user->id)->where('date', '=', $four2)->where('event', '=', $event)->get('distance');
+
+        $five3 = Post::where('user_id', '=', $user->id)->where('date', '=', $five2)->where('event', '=', $event)->get('distance');
+
+        $six3 = Post::where('user_id', '=', $user->id)->where('date', '=', $six2)->where('event', '=', $event)->get('distance');
+
+
+        for ($i = 0; $i < count($day3); $i++) {
+            $today += $day3[$i]->distance;
+        }
+        for ($i = 0; $i < count($one3); $i++) {
+            $oneDayAgo += $one3[$i]->distance;
+        }
+        for ($i = 0; $i < count($two3); $i++) {
+            $twoDayAgo += $two3[$i]->distance;
+        }
+        for ($i = 0; $i < count($three3); $i++) {
+            $threeDayAgo += $three3[$i]->distance;
+        }
+        for ($i = 0; $i < count($four3); $i++) {
+            $fourDayAgo += $four3[$i]->distance;
+        }
+        for ($i = 0; $i < count($five3); $i++) {
+            $fiveDayAgo += $five3[$i]->distance;
+        }
+        for ($i = 0; $i < count($six3); $i++) {
+            $sixDayAgo += $six3[$i]->distance;
+        }
+
+        $weekRecord = ([
+            "today" => $today,
+            "oneDayAgo" => $oneDayAgo,
+            "twoDayAgo" => $twoDayAgo,
+            "threeDayAgo" => $threeDayAgo,
+            "fourDayAgo" => $fourDayAgo,
+            "fiveDayAgo" => $fiveDayAgo,
+            "sixDayAgo" => $sixDayAgo
+        ]);
+
+        if ($weekRecord) {
+            return response($weekRecord, 200);
+        } else {
+            return response([
+                "today" => 0,
+                "oneDayAgo" => 0,
+                "twoDayAgo" => 0,
+                "threeDayAgo" => 0,
+                "fourDayAgo" => 0,
+                "fiveDayAgo" => 0,
+                "sixDayAgo" => 0
+            ]);
+        }
+        // $post_distance = Post::where('user_id', '=', $user->id)->where('date', '>=', $first)->where('date', '<=', $last)->where('event', '=', $event)->get('distance');
+        // $post_date = Post::where('user_id', '=', $user->id)->where('date', '>=', $first)->where('date', '<=', $last)->where('event', '=', $event)->get('date');
+        // $count = Post::where('user_id', '=', $user->id)->where('date', '>=', $first)->where('date', '<=', $last)->where('event', '=', $event)->count();
+
+        // //요일별 저장 함수 실행
+        // return $this->weekData($post_distance, $post_date, $count);
     }
 
     public function goal(Request $request)
@@ -296,66 +384,66 @@ class PostController extends Controller
 
 
 
-    //날짜 데이터를 보고 요일별로 나누어 요일별 누적 거리 계산
-    protected function weekData($post_distance, $post_date, $count)
-    {
-        $array_week = array("일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일");
+    // //날짜 데이터를 보고 요일별로 나누어 요일별 누적 거리 계산
+    // protected function weekData($post_distance, $post_date, $count)
+    // {
+    //     $array_week = array("일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일");
 
-        $Mon = 0;
-        $Tue = 0;
-        $Wed = 0;
-        $Tur = 0;
-        $Fri = 0;
-        $Sat = 0;
-        $Sun = 0;
+    //     $Mon = 0;
+    //     $Tue = 0;
+    //     $Wed = 0;
+    //     $Tur = 0;
+    //     $Fri = 0;
+    //     $Sat = 0;
+    //     $Sun = 0;
 
-        //반복문으로 요일별로 확인하여 누적 거리 저장
-        for ($i = 0; $i < $count; $i++) {
-            $day = $post_date[$i]->date;
-            $weekday = $array_week[date('w', strtotime($day))];
-            if ($weekday == "월요일") {
-                $Mon += $post_distance[$i]->distance;
-            } else if ($weekday == "화요일") {
-                $Tue += $post_distance[$i]->distance;
-            } else if ($weekday == "수요일") {
-                $Wed += $post_distance[$i]->distance;
-            } else if ($weekday == "목요일") {
-                $Tur += $post_distance[$i]->distance;
-            } else if ($weekday == "금요일") {
-                $Fri += $post_distance[$i]->distance;
-            } else if ($weekday == "토요일") {
-                $Sat += $post_distance[$i]->distance;
-            } else if ($weekday == "일요일") {
-                $Sun += $post_distance[$i]->distance;
-            }
-        }
+    //     //반복문으로 요일별로 확인하여 누적 거리 저장
+    //     for ($i = 0; $i < $count; $i++) {
+    //         $day = $post_date[$i]->date;
+    //         $weekday = $array_week[date('w', strtotime($day))];
+    //         if ($weekday == "월요일") {
+    //             $Mon += $post_distance[$i]->distance;
+    //         } else if ($weekday == "화요일") {
+    //             $Tue += $post_distance[$i]->distance;
+    //         } else if ($weekday == "수요일") {
+    //             $Wed += $post_distance[$i]->distance;
+    //         } else if ($weekday == "목요일") {
+    //             $Tur += $post_distance[$i]->distance;
+    //         } else if ($weekday == "금요일") {
+    //             $Fri += $post_distance[$i]->distance;
+    //         } else if ($weekday == "토요일") {
+    //             $Sat += $post_distance[$i]->distance;
+    //         } else if ($weekday == "일요일") {
+    //             $Sun += $post_distance[$i]->distance;
+    //         }
+    //     }
 
-        //요일별 누적 거리
-        $weekRecord = ([
-            "Mon" => $Mon,
-            "Tue" => $Tue,
-            "Wed" => $Wed,
-            "Tur" => $Tur,
-            "Fri" => $Fri,
-            "Sat" => $Sat,
-            "Sun" => $Sun
-        ]);
+    //     //요일별 누적 거리
+    //     $weekRecord = ([
+    //         "Mon" => $Mon,
+    //         "Tue" => $Tue,
+    //         "Wed" => $Wed,
+    //         "Tur" => $Tur,
+    //         "Fri" => $Fri,
+    //         "Sat" => $Sat,
+    //         "Sun" => $Sun
+    //     ]);
 
-        if ($weekRecord) {
-            return response($weekRecord, 200);
-        } else {
-            return response([
-                "Mon" => 0,
-                "Tue" => 0,
-                "Wed" => 0,
-                "Tur" => 0,
-                "Fri" => 0,
-                "Sat" => 0,
-                "Sun" => 0,
-                200
-            ]);
-        }
-    }
+    //     if ($weekRecord) {
+    //         return response($weekRecord, 200);
+    //     } else {
+    //         return response([
+    //             "Mon" => 0,
+    //             "Tue" => 0,
+    //             "Wed" => 0,
+    //             "Tur" => 0,
+    //             "Fri" => 0,
+    //             "Sat" => 0,
+    //             "Sun" => 0,
+    //             200
+    //         ]);
+    //     }
+    // }
 
 
     //mmr상승 함수
