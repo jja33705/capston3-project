@@ -14,6 +14,7 @@ use App\Http\Controllers\TrackController;
 use App\Models\Comment;
 use App\Models\Record;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -108,6 +109,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [TrackController::class, 'track']);  //트랙아이디로 트랙 리턴
     });
 
-    Route::get('/unReadNotifications', [NotificationController::class, 'unReadNotifications']);
-    Route::get('/ReadNotifications', [NotificationController::class, 'ReadNotifications']);
+    Route::prefix('/notification')->group(function () {
+        Route::get('/unReadNotification', [NotificationController::class, 'unReadNotification']);
+        Route::get('/ReadNotification', [NotificationController::class, 'ReadNotification']);
+        Route::get('/read', [NotificationController::class, 'read']);
+        Route::delete('/delete', [NotificationController::class, 'delete']);
+    });
 });

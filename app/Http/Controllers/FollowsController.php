@@ -13,10 +13,13 @@ class FollowsController extends Controller
     public function store(User $user)
     {
         //현재 로그인한 유저의 id
-        $user2 = Auth::user();
-        $user->followers()->toggle($user2->id);
+        $me = Auth::user();
+        $follow = $user->followers()->toggle($me->id);
 
-        User::find($user->id)->notify(new InvoicePaid($user->id, $user2->id));
+        if ($follow['attached']) {
+            User::find($user->id)->notify(new InvoicePaid("follow", $me->id, "null"));
+        };
+
         return User::where('id', '=', $user->id)->get(['id', 'sex', 'name', 'profile', 'mmr']);
     }
 }

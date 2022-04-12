@@ -21,11 +21,11 @@ class InvoicePaid extends Notification implements ShouldQueue
     public $user_id;
     public $post_id;
 
-    public function __construct($type, $user_id)
+    public function __construct($type, $user_id, $id)
     {
         $this->type = $type;
         $this->user_id = $user_id;
-        // $this->post_id = $post_id;
+        $this->post_id = $id;
     }
 
     /**
@@ -61,29 +61,24 @@ class InvoicePaid extends Notification implements ShouldQueue
      */
     public function toArray($notifiable)
     {
-        // return $this->type;
-        return [
-            'id' => $this->type,
-            'content' => "followed you!"
-            // 'data' => $this->id + "followed you!",
-        ];
-        // if ($this->type == 'follow') {
-        //     return 1;
-        //     if (User::with('followers')->find($this->id)) {
-        //         return [
-        //             'data' => $this->id + "followed you!",
-        //         ];
-        //     };
-        // } else if ($this->type == 'like') {
-        //     return [
-        //         'data4' => $this->test,
-        //         'data' => 'This is my first notification'
-        //     ];
-        // } else {
-        //     return [
-        //         'data4' => $this->test,
-        //         'data' => 'This is my first notification'
-        //     ];
-        // }
+        if ($this->type == 'follow') {
+            return [
+                'type' => $this->type,
+                'user_id' => $this->user_id
+            ];
+        } else if ($this->type == 'like') {
+            return [
+                'type' => $this->type,
+                'user_id' => $this->user_id,
+                'post_id' => $this->post_id,
+
+            ];
+        } else {
+            return [
+                'type' => $this->type,
+                'user_id' => $this->user_id,
+                'post_id' => $this->post_id,
+            ];
+        }
     }
 }

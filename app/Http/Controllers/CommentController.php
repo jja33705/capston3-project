@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use App\Models\Post;
 use App\Models\Reply;
+use App\Models\User;
+use App\Notifications\InvoicePaid;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,13 +16,18 @@ class CommentController extends Controller
     {
         $request->validate(['content' => ['required']]);
 
+        $user_id = Auth::user()->id;
         $comment = Comment::create(
             [
                 'content' => $request->content,
                 'post_id' => $id,
-                'user_id' => Auth::user()->id,
+                'user_id' => $user_id,
             ]
         );
+        $post = Post::where('id', '=', $id)->first('user_id');
+
+        User::find($post->user_id)->notify(new InvoicePaid("comment", $user_id, $id));
+
 
         if ($comment) {
             return response([
