@@ -18,12 +18,14 @@ class InvoicePaid extends Notification implements ShouldQueue
      * @return void
      */
     public $type;
-    public $id;
+    public $user_id;
+    public $post_id;
 
     public function __construct($type, $user_id)
     {
         $this->type = $type;
-        $this->id = $user_id;
+        $this->user_id = $user_id;
+        // $this->post_id = $post_id;
     }
 
     /**
@@ -59,9 +61,10 @@ class InvoicePaid extends Notification implements ShouldQueue
      */
     public function toArray($notifiable)
     {
-        return utf8_encode($this->type);
+        // return $this->type;
         return [
-            'data' => $this->id
+            'id' => $this->type,
+            'content' => "followed you!"
             // 'data' => $this->id + "followed you!",
         ];
         // if ($this->type == 'follow') {

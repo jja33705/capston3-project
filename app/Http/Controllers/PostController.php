@@ -34,8 +34,6 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-        $img = $request->img;
-        return count($img);
         $this->validate(
             $request,
             [
