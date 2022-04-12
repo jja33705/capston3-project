@@ -17,7 +17,7 @@ class RankingController extends Controller
     {
         $track_id = $request->query();
 
-        $query = DB::table('posts')->where('track_id', '=', $track_id)->where('kind', '=', '랭크')->select('user_id', DB::raw('MIN(time) as time'))->groupBy('user_id')->orderBy('time')->get();
+        $query = DB::table('posts')->where('track_id', '=', $track_id)->select('user_id', DB::raw('MIN(time) as time'))->groupBy('user_id')->orderBy('time')->get();
 
         $data = array();
         $data2 = array();
