@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -16,9 +17,13 @@ class InvoicePaid extends Notification implements ShouldQueue
      *
      * @return void
      */
-    public function __construct()
+    public $type;
+    public $id;
+
+    public function __construct($type, $user_id)
     {
-        //
+        $this->type = $type;
+        $this->id = $user_id;
     }
 
     /**
@@ -54,8 +59,28 @@ class InvoicePaid extends Notification implements ShouldQueue
      */
     public function toArray($notifiable)
     {
+        return utf8_encode($this->type);
         return [
-            'data' => 'This is my first notification'
+            'data' => $this->id
+            // 'data' => $this->id + "followed you!",
         ];
+        // if ($this->type == 'follow') {
+        //     return 1;
+        //     if (User::with('followers')->find($this->id)) {
+        //         return [
+        //             'data' => $this->id + "followed you!",
+        //         ];
+        //     };
+        // } else if ($this->type == 'like') {
+        //     return [
+        //         'data4' => $this->test,
+        //         'data' => 'This is my first notification'
+        //     ];
+        // } else {
+        //     return [
+        //         'data4' => $this->test,
+        //         'data' => 'This is my first notification'
+        //     ];
+        // }
     }
 }

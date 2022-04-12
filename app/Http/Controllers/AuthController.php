@@ -59,7 +59,6 @@ class AuthController extends Controller
 
         $user = User::with(['followings', 'followers', 'posts'])->find($login_user->id);
 
-        User::find($user->id)->notify(new InvoicePaid);
 
         return response([
             'access_token' => $login_token,
