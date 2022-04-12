@@ -12,6 +12,7 @@ class NotificationController extends Controller
     //안읽은 알림들
     public function unReadNotification()
     {
+        return 1;
         $data = auth()->user()->unReadNotifications;
 
         return $this->notification($data);
