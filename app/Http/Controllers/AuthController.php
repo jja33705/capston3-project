@@ -44,6 +44,21 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        $request->validate([
+            'email' => 'required',
+            'password' => 'required'
+        ]);
+
+
+        $remember_me = $request->has('remember_me') ? true : false;
+        if (auth()->attempt($request->only('email', 'password'), $remember_me)) {
+            $user = auth()->user();
+        } else {
+            return response([
+                'message' => 'Invalid credentials!', 401
+            ]);
+        }
+
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response([
                 'message' => 'Invalid credentials!'
@@ -51,7 +66,6 @@ class AuthController extends Controller
         }
 
         $login_user = Auth::user();
-
         $login_token = $login_user->createToken('token')->plainTextToken;
 
         $cookie = cookie('login_token', $login_token, 60 * 24); // 1 day
