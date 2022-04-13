@@ -40,7 +40,9 @@ Route::get('/test', [AuthController::class, 'test']);
 Route::get('/auth/login/google', [GoogleAuthController::class, 'redirect']);
 Route::get('/auth/login/google/callback', [GoogleAuthController::class, 'callback']);
 
-Route::get('/gpsData', [MMRController::class, 'gpsData']);
+Route::get('/gpsData', [GpsDataController::class, 'gpsData']);
+Route::get('/gpsData/check', [GpsDataController::class, 'gpsDataCheck']);
+
 
 //현재로그인 확인
 Route::middleware('auth:sanctum')->group(function () {
