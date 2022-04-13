@@ -64,12 +64,11 @@ class AuthController extends Controller
 
         $user = User::with(['followings', 'followers', 'posts'])->find($login_user->id);
 
-        if ($user) {
-            return response([
-                'access_token' => $login_token,
-                'user' => $user,
-            ])->withCookie($cookie);
-        }
+
+        return response([
+            'access_token' => $login_token,
+            'user' => $user,
+        ])->withCookie($cookie);
     }
 
 
