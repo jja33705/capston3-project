@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FollowsController;
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\GpsDataController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MMRController;
 use App\Http\Controllers\NotificationController;
@@ -114,5 +115,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/ReadNotification', [NotificationController::class, 'ReadNotification']);
         Route::get('/read', [NotificationController::class, 'read']);
         Route::delete('/delete', [NotificationController::class, 'delete']);
+    });
+
+    Route::prefix('/gpsData')->group(function () {
+        Route::get('/', [GpsDataController::class, 'gpsData']);
+        Route::get('/check', [GpsDataController::class, 'gpsDataCheck']);
     });
 });
