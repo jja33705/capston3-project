@@ -50,7 +50,9 @@ class AuthController extends Controller
         ]);
 
 
-        $remember_me = $request->has('remember_me') ? true : false;
+        // $remember_me = $request->has('remember_me' == true) ? true : false;
+        $remember_me = $request->remember_me;
+
         if (auth()->attempt($request->only('email', 'password'), $remember_me)) {
             $user = auth()->user();
         } else {
@@ -72,12 +74,20 @@ class AuthController extends Controller
 
 
         $user = User::with(['followings', 'followers', 'posts'])->find($login_user->id);
+        // return $user->remember_token;
 
-
-        return response([
-            'access_token' => $login_token,
-            'user' => $user,
-        ])->withCookie($cookie);
+        if ($user->remember_token) {
+            return response([
+                'access_token' => $login_token,
+                'remember_token' => $user->remember_token,
+                'user' => $user,
+            ])->withCookie($cookie);
+        } else {
+            return response([
+                'access_token' => $login_token,
+                'user' => $user,
+            ]);
+        }
     }
 
 
