@@ -116,9 +116,4 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/read', [NotificationController::class, 'read']);
         Route::delete('/delete', [NotificationController::class, 'delete']);
     });
-
-    // Route::prefix('/gpsData')->group(function () {
-    //     Route::get('/', [GpsDataController::class, 'gpsData']);
-    //     Route::get('/check', [GpsDataController::class, 'gpsDataCheck']);
-    // });
 });
