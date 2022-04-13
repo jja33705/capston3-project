@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DayRecord;
 use App\Models\Follow;
 use App\Models\Image;
+use App\Models\MapImage;
 use App\Models\Post;
 use App\Models\Record;
 use App\Models\User;
@@ -90,10 +91,11 @@ class PostController extends Controller
             ["gps_id" => $gps_id],  //노드에서 받아와야할 정보
         );
 
-
         if ($request->kind == "자유") {
             //이미지 유무 확인후 있으면 save메서드 호출
             if ($request->hasFile('img')) {
+                $this->saveImage($request, $input);
+            } else if ($request->hasFile('mapImg')) {
                 $this->saveImage($request, $input);
             } else {
                 Post::create($input);
@@ -104,6 +106,8 @@ class PostController extends Controller
         } else if ($request->kind == "싱글") {
             if ($request->hasFile('img')) {
                 $this->saveImage($request, $input);
+            } else if ($request->hasFile('mapImg')) {
+                $this->saveImage($request, $input);
             } else {
                 Post::create($input);
             }
@@ -112,6 +116,8 @@ class PostController extends Controller
             ], 201);
         } else if ($request->kind == "친선") {
             if ($request->hasFile('img')) {
+                $this->saveImage($request, $input);
+            } else if ($request->hasFile('mapImg')) {
                 $this->saveImage($request, $input);
             } else {
                 Post::create($input);
@@ -124,6 +130,8 @@ class PostController extends Controller
             $opponentTime = Post::where('id', '=', $request->opponent_id)->first('time');
             if ($opponentTime) {
                 if ($request->hasFile('img')) {
+                    $this->saveImage($request, $input);
+                } else if ($request->hasFile('mapImg')) {
                     $this->saveImage($request, $input);
                 } else {
                     Post::create($input);
@@ -153,7 +161,7 @@ class PostController extends Controller
         array_push($array, $id);
 
         //팔로잉한 아이디의 포스트만 시간별로 출력
-        $post = Post::with(['user', 'likes', 'comment'])->whereIn('user_id', $array)->where('range', 'public')->orderby('created_at', 'desc')->paginate(10);
+        $post = Post::with(['user', 'likes', 'comment', 'image', 'mapImage'])->whereIn('user_id', $array)->where('range', 'public')->orderby('created_at', 'desc')->paginate(10);
 
 
         //gpsData를 요청해서 같이 묶어서 보내줘야함
@@ -474,13 +482,27 @@ class PostController extends Controller
     protected function saveImage($request, $input)
     {
         $post = Post::create($input);
-        for ($i = 0; $i < count($request->img); $i++) {
-            $path[$i] = $request->img[$i]->store('image', 's3');
-            Image::create([
-                'image' => basename($path[$i]),
-                'url' => Storage::url($path[$i]),
-                'post_id' => $post->id
-            ]);
+
+        if ($request->hasFile('img')) {
+            for ($i = 0; $i < count($request->img); $i++) {
+                $path[$i] = $request->img[$i]->store('image', 's3');
+                Image::create([
+                    'image' => basename($path[$i]) . time(),
+                    'url' => Storage::url($path[$i]),
+                    'post_id' => $post->id
+                ]);
+            }
+        }
+
+        if ($request->hasFile('mapImg')) {
+            for ($i = 0; $i < count($request->mapImg); $i++) {
+                $path[$i] = $request->mapImg[$i]->store('mapImage', 's3');
+                MapImage::create([
+                    'image' => basename($path[$i]) . time(),
+                    'url' => Storage::url($path[$i]),
+                    'post_id' => $post->id
+                ]);
+            }
         }
     }
 }

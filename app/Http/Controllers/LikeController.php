@@ -16,10 +16,12 @@ class LikeController extends Controller
         $me = Auth::user();
         $like = $post->likes()->toggle($me->id);
 
-
+        // return $like['attached'] !== [$me->id];
 
         if ($like['attached']) {
-            User::find($post->user_id)->notify(new InvoicePaid("like", $me->id, $post->id));
+            if ($like['attached'] == [$me->id]) {
+                User::find($post->user_id)->notify(new InvoicePaid("like", $me->id, $post->id));
+            }
         }
 
         return $like;

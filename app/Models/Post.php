@@ -43,4 +43,14 @@ class Post extends Model
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function image()
+    {
+        return $this->hasMany(Image::class);
+    }
+
+    public function mapImage()
+    {
+        return $this->hasMany(MapImage::class);
+    }
 }
