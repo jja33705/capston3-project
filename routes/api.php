@@ -49,9 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('userSearch', [AuthController::class, 'userSearch']);
     Route::post('/profile', [AuthController::class, 'profile']);
-    Route::get('/markAsRead', function () {
-        return auth()->user()->unReadNotifications->markAsRead();
-    });
+
 
     // 운동sns
     Route::prefix('post')->group(function () {
@@ -117,8 +115,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/delete', [NotificationController::class, 'delete']);
     });
 
-    Route::prefix('/gpsData')->group(function () {
-        Route::get('/', [GpsDataController::class, 'gpsData']);
-        Route::get('/check', [GpsDataController::class, 'gpsDataCheck']);
-    });
+    // Route::prefix('/gpsData')->group(function () {
+    //     Route::get('/', [GpsDataController::class, 'gpsData']);
+    //     Route::get('/check', [GpsDataController::class, 'gpsDataCheck']);
+    // });
 });
