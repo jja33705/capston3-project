@@ -50,17 +50,6 @@ class AuthController extends Controller
         ]);
 
 
-        // $remember_me = $request->has('remember_me' == true) ? true : false;
-        // $remember_me = $request->remember_me;
-
-        // if (auth()->attempt($request->only('email', 'password'), $remember_me)) {
-        //     $user = auth()->user();
-        // } else {
-        //     return response([
-        //         'message' => 'Invalid credentials!', 401
-        //     ]);
-        // }
-
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response([
                 'message' => 'Invalid credentials!'
@@ -74,7 +63,6 @@ class AuthController extends Controller
 
 
         $user = User::with(['followings', 'followers', 'posts'])->find($login_user->id);
-        // return $user->remember_token;
 
         if ($user) {
             return response([
@@ -82,10 +70,7 @@ class AuthController extends Controller
                 'user' => $user,
             ])->withCookie($cookie);
         } else {
-            return response([
-                'access_token' => $login_token,
-                'user' => $user,
-            ]);
+            return response("", 401);
         }
     }
 
