@@ -69,8 +69,6 @@ class AuthController extends Controller
                 'access_token' => $login_token,
                 'user' => $user,
             ])->withCookie($cookie);
-        } else {
-            return response("", 401);
         }
     }
 
