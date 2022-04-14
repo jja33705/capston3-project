@@ -164,14 +164,14 @@ class PostController extends Controller
         $post = Post::with(['user', 'likes', 'comment'])->whereIn('user_id', $array)->where('range', 'public')->orderby('created_at', 'desc')->paginate(10);
 
 
-        $opponent_post = array();
-        for ($i = 0; $i < count($post); $i++) {
-            if ($post[$i]->opponent_id) {
-                $op_post = Post::where('id', '=', $post[$i]->opponent_id)->first();
-                array_push($opponent_post, $op_post);
-            }
-            $post[$i]["opponent_post"] = $opponent_post[$i];
-        }
+        // $opponent_post = array();
+        // for ($i = 0; $i < count($post); $i++) {
+        //     if ($post[$i]->opponent_id) {
+        //         $op_post = Post::where('id', '=', $post[$i]->opponent_id)->first();
+        //         array_push($opponent_post, $op_post);
+        //     }
+        //     $post[$i]["opponent_post"] = $opponent_post[$i];
+        // }
 
 
         //gpsData를 요청해서 같이 묶어서 보내줘야함
