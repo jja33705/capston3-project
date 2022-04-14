@@ -46,8 +46,13 @@ class GoalController extends Controller
         $goal = Goal::where('user_id', '=', $user->id)->where('firstDate', '<=', $today)->where('lastDate', '>=', $today)->get();
 
         for ($i = 0; $i < count($goal); $i++) {
-            $post = Post::where('user_id', '=', $user->id)->where('date', '>=', $goal[$i]['firstDate'])->where('date', '<=', $goal[$i]['lastDate'])->get();
+            $post = Post::where('user_id', '=', $user->id)->where('date', '>=', $goal[$i]['firstDate'])->where('date', '<=', $goal[$i]['lastDate'])->orderby('date')->get();
         }
+
+        return $post;
+
+        // for ($i = 0; $i < count($goal); $i++) {
+        // }
 
 
         //목표 기간내 주행한 누적거리

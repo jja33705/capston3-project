@@ -190,7 +190,7 @@ class PostController extends Controller
         $user = Auth::user()->id;
 
         //최근 게시물 순으로 보여줌
-        $post = Post::with(['user', 'likes', 'comment'])->orderby('created_at', 'desc')->where('user_id', '=', $user)->paginate(10);
+        $post = Post::with(['user', 'likes', 'comment', 'image', 'mapImage'])->orderby('created_at', 'desc')->where('user_id', '=', $user)->paginate(10);
 
         //gpsData를 요청해서 같이 묶어서 보내줘야함
         $gpsData = array();
