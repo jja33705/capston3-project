@@ -152,7 +152,6 @@ class PostController extends Controller
         $followings = Follow::where('follower_id', '=', $id)->get('following_id');
         $array_length = count($followings);
         $array = array();
-        $gpsData = array();
 
         //배열에 팔로잉한 아이디 push
         for ($i = 0; $i < $array_length; $i++) {
@@ -162,17 +161,27 @@ class PostController extends Controller
         array_push($array, $id);
 
         //팔로잉한 아이디의 포스트만 시간별로 출력
-        $post = Post::with(['user', 'likes', 'comment', 'image', 'mapImage'])->whereIn('user_id', $array)->where('range', 'public')->orderby('created_at', 'desc')->paginate(10);
+        $post = Post::with(['user', 'likes', 'comment'])->whereIn('user_id', $array)->where('range', 'public')->orderby('created_at', 'desc')->paginate(10);
+
+
+        $opponent_post = array();
+        for ($i = 0; $i < count($post); $i++) {
+            if ($post[$i]->opponent_id) {
+                $op_post = Post::where('id', '=', $post[$i]->opponent_id)->first();
+                array_push($opponent_post, $op_post);
+            }
+            $post[$i]["opponent_post"] = $opponent_post[$i];
+        }
 
 
         //gpsData를 요청해서 같이 묶어서 보내줘야함
-        for ($i = 0; $i < $post->count(); $i++) {
-            $gpsId = $post[$i]->gps_id;
-            $response = Http::get("http://13.124.24.179/api/gpsdata/$gpsId");
-            $data = json_decode($response->getBody(), true);
-            array_push($gpsData, $data);
-            $post[$i]["gpsData"] = $gpsData[$i];
-        }
+        // for ($i = 0; $i < $post->count(); $i++) {
+        //     $gpsId = $post[$i]->gps_id;
+        //     $response = Http::get("http://13.124.24.179/api/gpsdata/$gpsId");
+        //     $data = json_decode($response->getBody(), true);
+        //     array_push($gpsData, $data);
+        //     $post[$i]["gpsData"] = $gpsData[$i];
+        // }
 
         if ($post) {
             return response(
@@ -192,17 +201,16 @@ class PostController extends Controller
         //최근 게시물 순으로 보여줌
         $post = Post::with(['user', 'likes', 'comment', 'image', 'mapImage'])->orderby('created_at', 'desc')->where('user_id', '=', $user)->paginate(10);
 
-        //gpsData를 요청해서 같이 묶어서 보내줘야함
-        $gpsData = array();
-        for ($i = 0; $i < $post->count(); $i++) {
-            $gpsId = $post[$i]->gps_id;
-            $response = Http::get("http://13.124.24.179/api/gpsdata/$gpsId");
-            $data = json_decode($response->getBody(), true);
-            array_push($gpsData, $data);
-            $post[$i]["gpsData"] = $gpsData[$i];
+
+        $opponent_post = array();
+        for ($i = 0; $i < count($post); $i++) {
+            if ($post[$i]->opponent_id) {
+                $op_post = Post::where('id', '=', $post[$i]->opponent_id)->first();
+                array_push($opponent_post, $op_post);
+            }
+            $post[$i]["opponent_post"] = $opponent_post[$i];
         }
 
-        $post[0]["gpsData"] = $gpsData[0];
 
         if ($post) {
             return response(
