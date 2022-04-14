@@ -51,46 +51,26 @@ class GoalController extends Controller
             array_push($array, $post);
         }
 
-        // return $array[0][0]['distance'];
-        //목표 기간내 주행한 누적거리
-        // return $array;
-
-        $distance = array();
         $data = array();
 
-
-        // return $array[0][2]['distance'];
-        for ($i = 0; $i < count($array[0]); $i++) {
+        for ($i = 0; $i < count($array); $i++) {
             $data[$i] = 0;
         }
-
-        for ($i = 0; $i < count($array[0]); $i++) {
-            $data[0] += $array[0][$i]['distance'];
-        }
-
-        return $data[0];
 
         for ($i = 0; $i < count($array); $i++) {
             for ($y = 0; $y < count($array[$i]); $y++) {
                 $data[$i] += $array[$i][$y]['distance'];
             }
-            // array_push($distance, $data[$i]);
         }
 
-
-        return $data[0];
-
-        return $distance;
-
-
         for ($i = 0; $i < count($goal); $i++) {
-            if ($distance >= $goal[$i]['goalDistance']) {
+            if ($data[$i] >= $goal[$i]['goalDistance']) {
                 Goal::where('id', '=', $goal[$i]['id'])->update(['success' => true]);
             }
         }
 
-        if ($distance) {
-            return response($distance, 200);
+        if ($data) {
+            return response($data, 200);
         } else {
             return response('', 204);
         }
