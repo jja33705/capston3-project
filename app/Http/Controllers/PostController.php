@@ -165,12 +165,18 @@ class PostController extends Controller
 
 
         $opponent_post = array();
+
         for ($i = 0; $i < count($post); $i++) {
             if ($post[$i]->opponent_id) {
                 $op_post = Post::where('id', '=', $post[$i]->opponent_id)->first();
                 array_push($opponent_post, $op_post);
+                $post[$i]["opponent_post"] = $opponent_post[$i];
+            } else {
+                return response(
+                    $post,
+                    200
+                );
             }
-            $post[$i]["opponent_post"] = $opponent_post[$i];
         }
 
 
