@@ -161,7 +161,7 @@ class PostController extends Controller
         array_push($array, $id);
 
         //팔로잉한 아이디의 포스트만 시간별로 출력
-        $post = Post::with(['user', 'likes', 'comment'])->whereIn('user_id', $array)->where('range', 'public')->orderby('created_at', 'desc')->paginate(10);
+        $post = Post::with(['user', 'likes', 'comment', 'image', 'mapImage'])->whereIn('user_id', $array)->where('range', 'public')->orderby('created_at', 'desc')->paginate(10);
 
 
         $opponent_post = array();
