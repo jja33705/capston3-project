@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FollowsController;
+use App\Http\Controllers\GoalController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\GpsDataController;
 use App\Http\Controllers\LikeController;
@@ -40,6 +41,7 @@ Route::get('/test', [AuthController::class, 'test']);
 Route::get('/auth/login/google', [GoogleAuthController::class, 'redirect']);
 Route::get('/auth/login/google/callback', [GoogleAuthController::class, 'callback']);
 
+//gps데이터 관리
 Route::get('/gpsData', [GpsDataController::class, 'gpsData']);
 Route::get('/gpsData/check', [GpsDataController::class, 'gpsDataCheck']);
 
@@ -115,5 +117,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/ReadNotification', [NotificationController::class, 'ReadNotification']);
         Route::get('/read', [NotificationController::class, 'read']);
         Route::delete('/delete', [NotificationController::class, 'delete']);
+    });
+
+    Route::prefix('/goal')->group(function () {
+        Route::post('/', [GoalController::class, 'goal']);
+        Route::get('/check', [GoalController::class, 'checkGoal']);
+        Route::get('/success', [GoalController::class, 'successGoal']);
+        Route::get('/progress', [GoalController::class, 'progressGoal']);
+        Route::get('/all', [GoalController::class, 'allGoal']);
     });
 });

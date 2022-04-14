@@ -10,6 +10,8 @@ class TrackController extends Controller
     public function addTrack(Request $request)
     {
         $gpsData = $request->gpsData;
+
+
         $response = Http::post('http://13.124.24.179/api/tracks', $gpsData);
         return json_decode($response, true);
     }
