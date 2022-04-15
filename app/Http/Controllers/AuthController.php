@@ -34,6 +34,7 @@ class AuthController extends Controller
             'introduce' => $request->input('introduce'),
             'location' => $request->input('location'),
             'mmr' => 0,
+            'run_mmr' => 0
         ]);
 
         return response([

@@ -28,6 +28,7 @@ class User extends Authenticatable
         'introduce',
         'location',
         'mmr',
+        'run_mmr',
         "created_at",
         "fcm_token"
     ];

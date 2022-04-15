@@ -5,17 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Goal extends Model
+class CheckPoint extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         "user_id",
-        "title",
-        "goalDistance",
-        "firstDate",
-        "lastDate",
-        "success",
-        "event"
+        "time",
+        "track_id",
+        "checkPoint"
     ];
 }

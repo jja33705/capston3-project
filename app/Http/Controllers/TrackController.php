@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CheckPoint;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
 class TrackController extends Controller
@@ -48,5 +50,41 @@ class TrackController extends Controller
         $response = Http::get("http://13.124.24.179/api/tracks/$id");
         //JSON 문자열을 변환하여 값을 추출
         return json_decode($response, true);
+    }
+
+    public function checkPoint(Request $request)
+    {
+        $user = Auth::user();
+
+        $checkPoint = $request->query('checkPoint');
+        $track_id = $request->query('track_id');
+        $time = $request->query('time');
+
+        // CheckPoint::create([
+        //     'user_id' => $user->id,
+        //     'checkPoint' => $checkPoint,
+        //     'track_id' => $track_id,
+        //     'time' => $time
+        // ]);
+
+
+        $checkPoint = CheckPoint::where('checkPoint', '=', $checkPoint)->where('track_id', '=', $track_id)->orderby('time')->get();
+
+        for ($i = 0; $i < count($checkPoint); $i++) {
+            $checkPoint[$i]['rank'] = $i + 1;
+        }
+
+
+
+        return $checkPoint;
+
+
+
+        return count($checkPoint);
+
+
+
+
+        return count($checkPoint);
     }
 }

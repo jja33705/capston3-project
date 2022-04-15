@@ -44,13 +44,24 @@ class RankingController extends Controller
     {
         $track_id = $request->query('track_id');
         $user = Auth::user();
+        $query = DB::table('posts')->where('track_id', '=', $track_id)->select('user_id', DB::raw('MIN(time) as time'))->groupBy('user_id')->orderBy('time')->get();
 
-        $post = Post::where('track_id', '=', $track_id)->where('user_id', '=', $user->id)->orderby('time')->first();
+        $data = array();
+        $data2 = array();
+
+        for ($i = 0; $i < count($query); $i++) {
+            array_push($data, Post::where('user_id', '=', $query[$i]->user_id)->where('time', '=', $query[$i]->time)->first('id'));
+            array_push($data2, $data[$i]->id);
+        }
+
+
+        $post = Post::with('user')->whereIn('id', $data2)->where('user_id', '=', $user->id)->first();
+
 
         if ($post) {
             return response([
                 "post" => $post,
-                "rank" => Post::where('track_id', '=', $track_id)->where('time', '<=', $post->time)->count()
+                "rank" => Post::whereIn('id', $data2)->where('time', '<=', $post->time)->count()
             ], 200);
         } else {
             return response('', 204);
@@ -96,3 +107,6 @@ class RankingController extends Controller
         }
     }
 }
+
+
+//체크포인트 랭킹 목표

@@ -20,6 +20,8 @@ class MMRController extends Controller
         return $this->random_match($track_id);
     }
 
+    //해당 트랙을 나랑 팔로워들 사이에서 달린 리스트
+
     //친선전
     public function friendly(Request $request)
     {

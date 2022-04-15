@@ -18,6 +18,7 @@ class GoalController extends Controller
         $goalDistance = $request->goal;
         $firstDate = $request->firstDate;
         $lastDate = $request->lastDate;
+        $event = $request->event;
 
         $user = Auth::user();
         //목표 생성
@@ -27,7 +28,8 @@ class GoalController extends Controller
             'goalDistance' => $goalDistance,
             'firstDate' => $firstDate,
             'lastDate' => $lastDate,
-            'success' => false
+            'success' => false,
+            'event' => $event
         ]);
 
         if ($goal) {
@@ -43,29 +45,46 @@ class GoalController extends Controller
         $today = date('Y-m-d', time());
         $user = Auth::user();
 
-        $goal = Goal::where('user_id', '=', $user->id)->where('firstDate', '<=', $today)->where('lastDate', '>=', $today)->get();
+        //해당 기간내 자전거 목표
+        $goal = Goal::where('user_id', '=', $user->id)->where('event', '=', 'B')->where('firstDate', '<=', $today)->where('lastDate', '>=', $today)->get();
+        //해당 기간내 달리기 목표
+        // $run_goal = Goal::where('user_id', '=', $user->id)->where('event', '=', 'R')->where('firstDate', '<=', $today)->where('lastDate', '>=', $today)->get();
 
+        //설정 목표 기간내 해당하는 자전거활동
         $array = array();
         for ($i = 0; $i < count($goal); $i++) {
-            $post = Post::where('user_id', '=', $user->id)->where('date', '>=', $goal[$i]['firstDate'])->where('date', '<=', $goal[$i]['lastDate'])->orderby('date')->get();
+            $post = Post::where('user_id', '=', $user->id)->where('event', '=', 'B')->where('date', '>=', $goal[$i]['firstDate'])->where('date', '<=', $goal[$i]['lastDate'])->orderby('date')->get();
             array_push($array, $post);
         }
 
+        //설정 목표 기간내 해당하는 달리기활동
+        // for ($i = 0; $i < count($goal); $i++) {
+        //     $post = Post::where('user_id', '=', $user->id)->where('event', '=', 'R')->where('date', '>=', $goal[$i]['firstDate'])->where('date', '<=', $goal[$i]['lastDate'])->orderby('date')->get();
+        //     array_push($run_array, $post);
+        // }
+
         $data = array();
+        $run_data = array();
 
+        //0으로 설정
         for ($i = 0; $i < count($array); $i++) {
-            $data[$i] = 0;
+            $data[$i]['distance'] = 0;
         }
-
         for ($i = 0; $i < count($array); $i++) {
             for ($y = 0; $y < count($array[$i]); $y++) {
-                $data[$i] += $array[$i][$y]['distance'];
+                $data[$i]['distance'] += $array[$i][$y]['distance'];
             }
+            $data[$i]['goal'] = $goal[$i];
         }
 
+        //목표 성공여부 체크
         for ($i = 0; $i < count($goal); $i++) {
-            if ($data[$i] >= $goal[$i]['goalDistance']) {
+            if ($data[$i]['distance'] >= $goal[$i]['goalDistance']) {
                 Goal::where('id', '=', $goal[$i]['id'])->update(['success' => true]);
+                // $data[$i]['message'] = $data[$i]['goal']->title . " 달성!";
+                return response([
+                    $data,
+                ], 200);
             }
         }
 

@@ -87,16 +87,27 @@ class PostController extends Controller
             ["track_id" => $request->track_id],
             ["opponent_id" => $request->opponent_id],
             ["user_id" => $user->id],
-            ["mmr" => Auth::user()->mmr],
             ["date" => Carbon::now()->format('Y-m-d')],
             ["gps_id" => $gps_id],  //노드에서 받아와야할 정보
         );
 
+        if ($request->event == 'B') {
+            $input['mmr'] = Auth::user()->mmr;
+        } else {
+            $input['mmr'] = Auth::user()->run_mmr;
+        }
+
+        //맵이미지 유무 확인하고 저장
+        if ($request->hasFile('mapImg')) {
+            for ($i = 0; $i < count($request->mapImg); $i++) {
+                $path[$i] = $request->mapImg[$i]->store('mapImage', 's3');
+                $input["img"] = Storage::url($path[$i]);
+            }
+        }
+
         if ($request->kind == "자유") {
             //이미지 유무 확인후 있으면 save메서드 호출
             if ($request->hasFile('img')) {
-                $this->saveImage($request, $input);
-            } else if ($request->hasFile('mapImg')) {
                 $this->saveImage($request, $input);
             } else {
                 Post::create($input);
@@ -107,8 +118,6 @@ class PostController extends Controller
         } else if ($request->kind == "싱글") {
             if ($request->hasFile('img')) {
                 $this->saveImage($request, $input);
-            } else if ($request->hasFile('mapImg')) {
-                $this->saveImage($request, $input);
             } else {
                 Post::create($input);
             }
@@ -117,8 +126,6 @@ class PostController extends Controller
             ], 201);
         } else if ($request->kind == "친선") {
             if ($request->hasFile('img')) {
-                $this->saveImage($request, $input);
-            } else if ($request->hasFile('mapImg')) {
                 $this->saveImage($request, $input);
             } else {
                 Post::create($input);
@@ -132,14 +139,13 @@ class PostController extends Controller
             if ($opponentTime) {
                 if ($request->hasFile('img')) {
                     $this->saveImage($request, $input);
-                } else if ($request->hasFile('mapImg')) {
-                    $this->saveImage($request, $input);
                 } else {
                     Post::create($input);
                 }
             }
             //시간을 비교해서 mmr을 상승
-            return $this->mmrPoint($myTime, $opponentTime);
+            $type = $input['event'];
+            return $this->mmrPoint($myTime, $opponentTime, $type);
         }
     }
 
@@ -268,6 +274,9 @@ class PostController extends Controller
 
         //게시물 삭제
         if ($user == $user_id) {
+            if ($post->img) {
+                Storage::disk('s3')->delete('s3://run-images/mapImage/HSKaOki2wQVeTr64JzdEmw7n0Gp4DGRnKyUwfS17.jpg');
+            };
             $post->delete();
             return $post->id;
         } else {
@@ -452,27 +461,48 @@ class PostController extends Controller
 
 
     //mmr상승 함수
-    protected function mmrPoint($myTime, $opponentTime)
+    protected function mmrPoint($myTime, $opponentTime, $type)
     {
         $id = Auth::user()->id;
         //이기면 mmr +10
         if ($myTime < $opponentTime->time) {
-            DB::table('users')->where('id', $id)->increment('mmr', 10);
-            return response([
-                'message' => '승리하셨습니다'
-            ], 200);
+            if ($type == 'B') {
+                DB::table('users')->where('id', $id)->increment('mmr', 10);
+                return response([
+                    'message' => '승리하셨습니다'
+                ], 200);
+            } else {
+                DB::table('users')->where('id', $id)->increment('run_mmr', 10);
+                return response([
+                    'message' => '승리하셨습니다'
+                ], 200);
+            }
         } else if ($myTime == $opponentTime->time) {
             //무승부면 mmr +5
-            DB::table('users')->where('id', $id)->increment('mmr', 5);
-            return response([
-                'message' => '무승부입니다'
-            ], 200);
+            if ($type == 'B') {
+                DB::table('users')->where('id', $id)->increment('mmr', 10);
+                return response([
+                    'message' => '무승부입니다'
+                ], 200);
+            } else {
+                DB::table('users')->where('id', $id)->increment('run_mmr', 10);
+                return response([
+                    'message' => '무승부입니다'
+                ], 200);
+            }
         } else {
             //지면 mmr +3
-            DB::table('users')->where('id', $id)->increment('mmr', 3);
-            return response([
-                'message' => '패배하셨습니다'
-            ], 200);
+            if ($type == 'B') {
+                DB::table('users')->where('id', $id)->increment('mmr', 10);
+                return response([
+                    'message' => '패배하셨습니다'
+                ], 200);
+            } else {
+                DB::table('users')->where('id', $id)->increment('run_mmr', 10);
+                return response([
+                    'message' => '패배하셨습니다'
+                ], 200);
+            }
         }
     }
 
@@ -484,17 +514,6 @@ class PostController extends Controller
             for ($i = 0; $i < count($request->img); $i++) {
                 $path[$i] = $request->img[$i]->store('image', 's3');
                 Image::create([
-                    'image' => basename($path[$i]) . time(),
-                    'url' => Storage::url($path[$i]),
-                    'post_id' => $post->id
-                ]);
-            }
-        }
-
-        if ($request->hasFile('mapImg')) {
-            for ($i = 0; $i < count($request->mapImg); $i++) {
-                $path[$i] = $request->mapImg[$i]->store('mapImage', 's3');
-                MapImage::create([
                     'image' => basename($path[$i]) . time(),
                     'url' => Storage::url($path[$i]),
                     'post_id' => $post->id

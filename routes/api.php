@@ -110,6 +110,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [TrackController::class, 'allTracks']);  //모든 트랙 id리턴
         Route::get('/search', [TrackController::class, 'search']);  //구간에 맞는 트랙 리턴
         Route::get('/', [TrackController::class, 'track']);  //트랙아이디로 트랙 리턴
+        Route::get('/checkPoint', [TrackController::class, 'checkPoint']);
     });
 
     Route::prefix('/notification')->group(function () {
