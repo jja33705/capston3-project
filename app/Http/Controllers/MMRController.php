@@ -33,6 +33,7 @@ class MMRController extends Controller
         for ($i = 0; $i < count($user->followings); $i++) {
             array_push($array, $user->followings[$i]->id);
         }
+        array_push($array, $user->id);
 
         $post = Post::where('track_id', '=', $track_id)->whereIn('user_id', $array)->get();
         if ($post) {
