@@ -60,21 +60,35 @@ class TrackController extends Controller
         $track_id = $request->query('track_id');
         $time = $request->query('time');
 
-        $point = CheckPoint::create([
-            'user_id' => $user->id,
-            'checkPoint' => $checkPoint,
-            'track_id' => $track_id,
-            'time' => $time
-        ]);
+        //내 기존 기록 불러옴
+        $myCheckPoint = CheckPoint::where('checkPoint', '=', $checkPoint)->where('track_id', '=', $track_id)->where('user_id', '=', $user->id)->first();
+
+        //트랙에서 내 기록이 없거나 더 좋은 결과를 냈을 경우 체크포인트 저장
+        if ($myCheckPoint == null) {
+            //새로운 더 좋은 기록으로 바꿈
+            CheckPoint::create([
+                'user_id' => $user->id,
+                'track_id' => $track_id,
+                'time' => $time,
+                'checkPoint' => $checkPoint
+            ]);
+        } else if ($myCheckPoint['time'] > $time) {
+            CheckPoint::where('user_id', '=', $user->id)->where('checkPoint', '=', $checkPoint)->where('track_id', '=', $track_id)->update(['time' => $time]);
+        }
+
+        $allCheckPoint = CheckPoint::where('checkPoint', '=', $checkPoint)->where('track_id', '=', $track_id)->where('user_id', '!=', $user->id)->orderby('time')->get();
 
 
-        $checkPoint = CheckPoint::where('checkPoint', '=', $checkPoint)->where('track_id', '=', $track_id)->orderby('time')->get();
+        if ($allCheckPoint[count($allCheckPoint) - 1]['time'] < $time) {
+            return 100;
+        }
 
-
-        for ($i = 0; $i < count($checkPoint); $i++) {
-            $checkPoint[$i]['rank'] = ($i + 1) / count($checkPoint) * 100;
-            if ($checkPoint[$i]['time'] >= $point['time']) {
-                return $checkPoint[$i]['rank'];
+        for ($i = 0; $i < count($allCheckPoint); $i++) {
+            $allCheckPoint[$i]['rank'] = ($i + 1) / count($allCheckPoint) * 100;
+            if ($allCheckPoint[$i]['time'] > $time) {
+                return ($i + 1) / (count($allCheckPoint) + 1) * 100;
+            } else if ($allCheckPoint[$i]['time'] == $time) {
+                return $allCheckPoint[$i]['rank'];
             }
         }
     }

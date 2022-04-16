@@ -155,7 +155,6 @@ class GoalController extends Controller
     public function allGoal()
     {
         $user = Auth::user();
-
         $goal = Goal::where('user_id', '=', $user->id)->orderby('firstDate')->get();
 
         if ($goal) {

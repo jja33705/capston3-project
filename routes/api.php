@@ -45,6 +45,9 @@ Route::get('/auth/login/google/callback', [GoogleAuthController::class, 'callbac
 Route::get('/gpsData', [GpsDataController::class, 'gpsData']);
 Route::get('/gpsData/check', [GpsDataController::class, 'gpsDataCheck']);
 
+//목표관리
+
+
 
 //현재로그인 확인
 Route::middleware('auth:sanctum')->group(function () {
@@ -110,7 +113,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [TrackController::class, 'allTracks']);  //모든 트랙 id리턴
         Route::get('/search', [TrackController::class, 'search']);  //구간에 맞는 트랙 리턴
         Route::get('/', [TrackController::class, 'track']);  //트랙아이디로 트랙 리턴
-        Route::get('/checkPoint', [TrackController::class, 'checkPoint']);
+        Route::get('/checkPoint', [TrackController::class, 'checkPoint']);  //체크포인트
     });
 
     Route::prefix('/notification')->group(function () {
