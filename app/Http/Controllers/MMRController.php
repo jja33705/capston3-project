@@ -35,7 +35,7 @@ class MMRController extends Controller
         }
         array_push($array, $user->id);
 
-        $post = Post::where('track_id', '=', $track_id)->whereIn('user_id', $array)->get();
+        $post = Post::with('user')->where('track_id', '=', $track_id)->whereIn('user_id', $array)->paginate(10);
         if ($post) {
             return response([
                 'followPostList' => $post
