@@ -79,3 +79,6 @@ class TrackController extends Controller
         }
     }
 }
+
+
+//트랙좌표 index로 확인 가능

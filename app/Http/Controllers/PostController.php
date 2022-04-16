@@ -375,19 +375,9 @@ class PostController extends Controller
             "sixDayAgo" => $sixDayAgo
         ]);
 
-        if ($weekRecord) {
-            return response($weekRecord, 200);
-        } else {
-            return response([
-                "today" => 0,
-                "oneDayAgo" => 0,
-                "twoDayAgo" => 0,
-                "threeDayAgo" => 0,
-                "fourDayAgo" => 0,
-                "fiveDayAgo" => 0,
-                "sixDayAgo" => 0
-            ]);
-        }
+        return response($weekRecord, 200);
+
+
         // $post_distance = Post::where('user_id', '=', $user->id)->where('date', '>=', $first)->where('date', '<=', $last)->where('event', '=', $event)->get('distance');
         // $post_date = Post::where('user_id', '=', $user->id)->where('date', '>=', $first)->where('date', '<=', $last)->where('event', '=', $event)->get('date');
         // $count = Post::where('user_id', '=', $user->id)->where('date', '>=', $first)->where('date', '<=', $last)->where('event', '=', $event)->count();
