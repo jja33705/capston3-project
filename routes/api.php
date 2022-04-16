@@ -129,5 +129,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/success', [GoalController::class, 'successGoal']);
         Route::get('/progress', [GoalController::class, 'progressGoal']);
         Route::get('/all', [GoalController::class, 'allGoal']);
+        Route::delete('/delete/{id}', [GoalController::class, 'delete']);
     });
 });

@@ -80,15 +80,21 @@ class TrackController extends Controller
 
 
         if ($allCheckPoint[count($allCheckPoint) - 1]['time'] < $time) {
-            return 100;
+            return response([
+                'rank' => 100
+            ], 200);
         }
 
         for ($i = 0; $i < count($allCheckPoint); $i++) {
             $allCheckPoint[$i]['rank'] = ($i + 1) / count($allCheckPoint) * 100;
             if ($allCheckPoint[$i]['time'] > $time) {
-                return ($i + 1) / (count($allCheckPoint) + 1) * 100;
+                return response([
+                    'rank' => ($i + 1) / (count($allCheckPoint) + 1) * 100
+                ], 200);
             } else if ($allCheckPoint[$i]['time'] == $time) {
-                return $allCheckPoint[$i]['rank'];
+                return response([
+                    'rank' => $allCheckPoint[$i]['rank']
+                ], 200);
             }
         }
     }

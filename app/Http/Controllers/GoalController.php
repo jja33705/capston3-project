@@ -163,4 +163,19 @@ class GoalController extends Controller
             return response('', 204);
         }
     }
+
+    public function delete($id)
+    {
+        $goal = Goal::findOrFail($id);
+        $user = Auth::user()->id;
+        $user_id = $goal->user_id;
+
+        //게시물 삭제
+        if ($user == $user_id) {
+            $goal->delete();
+            return $goal;
+        } else {
+            return abort(401);
+        }
+    }
 }

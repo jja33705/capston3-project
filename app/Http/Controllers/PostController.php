@@ -271,12 +271,13 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
         $user = Auth::user()->id;
         $user_id = $post->user_id;
-
         //게시물 삭제
         if ($user == $user_id) {
-            if ($post->img) {
-                Storage::disk('s3')->delete('s3://run-images/mapImage/HSKaOki2wQVeTr64JzdEmw7n0Gp4DGRnKyUwfS17.jpg');
-            };
+            // if ($post->img) {
+            //     Storage::disk('s3')->delete('https://run-images.s3.ap-northeast-2.amazonaws.com/mapImage/LoS68WJHuvEu5tjPPM9R0aLqnjw4baLD52YHiDkv.jpg');
+            // };
+            Storage::disk('s3')->deleteDirectory('https://run-images.s3.ap-northeast-2.amazonaws.com/mapImage/SeLYgWx2t5NFaC3L3mSMJYrb9yzrSyYPcMoggy0f.jpg');
+
             $post->delete();
             return $post->id;
         } else {
