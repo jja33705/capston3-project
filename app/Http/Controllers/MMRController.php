@@ -25,16 +25,19 @@ class MMRController extends Controller
     //친선전
     public function friendly(Request $request)
     {
+        $user = Auth::user();
         $track_id = $request->query('track_id');
-        $user_id = $request->query('user_id');
 
-        $random_match_post = Post::where('track_id', '=', $track_id)->where('user_id', '=', $user_id)->first();
+        $array = array();
 
+        for ($i = 0; $i < count($user->followings); $i++) {
+            array_push($array, $user->followings[$i]->id);
+        }
 
-        if ($random_match_post) {
+        $post = Post::where('track_id', '=', $track_id)->whereIn('user_id', $array)->get();
+        if ($post) {
             return response([
-                'message' => '매칭이 완료 됐습니다',
-                'post' => $random_match_post
+                'followPostList' => $post
             ], 200);
         } else {
             return response('', 204);
