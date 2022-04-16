@@ -60,31 +60,22 @@ class TrackController extends Controller
         $track_id = $request->query('track_id');
         $time = $request->query('time');
 
-        // CheckPoint::create([
-        //     'user_id' => $user->id,
-        //     'checkPoint' => $checkPoint,
-        //     'track_id' => $track_id,
-        //     'time' => $time
-        // ]);
+        $point = CheckPoint::create([
+            'user_id' => $user->id,
+            'checkPoint' => $checkPoint,
+            'track_id' => $track_id,
+            'time' => $time
+        ]);
 
 
         $checkPoint = CheckPoint::where('checkPoint', '=', $checkPoint)->where('track_id', '=', $track_id)->orderby('time')->get();
 
+
         for ($i = 0; $i < count($checkPoint); $i++) {
-            $checkPoint[$i]['rank'] = $i + 1;
+            $checkPoint[$i]['rank'] = ($i + 1) / count($checkPoint) * 100;
+            if ($checkPoint[$i]['time'] >= $point['time']) {
+                return $checkPoint[$i]['rank'];
+            }
         }
-
-
-
-        return $checkPoint;
-
-
-
-        return count($checkPoint);
-
-
-
-
-        return count($checkPoint);
     }
 }
