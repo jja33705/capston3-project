@@ -45,51 +45,81 @@ class GoalController extends Controller
         $today = date('Y-m-d', time());
         $user = Auth::user();
 
-        //해당 기간내 자전거 목표
-        $goal = Goal::where('user_id', '=', $user->id)->where('event', '=', 'B')->where('firstDate', '<=', $today)->where('lastDate', '>=', $today)->get();
-        //해당 기간내 달리기 목표
-        // $run_goal = Goal::where('user_id', '=', $user->id)->where('event', '=', 'R')->where('firstDate', '<=', $today)->where('lastDate', '>=', $today)->get();
+        //해당 기간내 목표
+        $goal = Goal::where('user_id', '=', $user->id)->where('firstDate', '<=', $today)->where('lastDate', '>=', $today)->where('event', '=', 'B')->get();
+        $run_goal = Goal::where('user_id', '=', $user->id)->where('firstDate', '<=', $today)->where('lastDate', '>=', $today)->where('event', '=', 'R')->get();
 
-        //설정 목표 기간내 해당하는 자전거활동
+        //설정 목표 기간내 해당하는 활동
         $array = array();
+        $run_array = array();
+
+        //기간내 자전거 활동
         for ($i = 0; $i < count($goal); $i++) {
             $post = Post::where('user_id', '=', $user->id)->where('event', '=', 'B')->where('date', '>=', $goal[$i]['firstDate'])->where('date', '<=', $goal[$i]['lastDate'])->orderby('date')->get();
             array_push($array, $post);
         }
 
-        //설정 목표 기간내 해당하는 달리기활동
-        // for ($i = 0; $i < count($goal); $i++) {
-        //     $post = Post::where('user_id', '=', $user->id)->where('event', '=', 'R')->where('date', '>=', $goal[$i]['firstDate'])->where('date', '<=', $goal[$i]['lastDate'])->orderby('date')->get();
-        //     array_push($run_array, $post);
-        // }
 
+        //기간내 달리기 활동
+        for ($i = 0; $i < count($run_goal); $i++) {
+            $post = Post::where('user_id', '=', $user->id)->where('event', '=', 'R')->where('date', '>=', $run_goal[$i]['firstDate'])->where('date', '<=', $run_goal[$i]['lastDate'])->orderby('date')->get();
+            array_push($run_array, $post);
+        }
+
+        //해당 운동의 누적거리 계산
         $data = array();
         $run_data = array();
 
-        //0으로 설정
+        //자전거 데이터 0으로 설정
         for ($i = 0; $i < count($array); $i++) {
             $data[$i]['distance'] = 0;
         }
+
+        //달리기 데이터 0으로 설정
+        for ($i = 0; $i < count($run_array); $i++) {
+            $run_data[$i]['distance'] = 0;
+        }
+
+
+
+        //기간내 자전거 누적거리
         for ($i = 0; $i < count($array); $i++) {
             for ($y = 0; $y < count($array[$i]); $y++) {
                 $data[$i]['distance'] += $array[$i][$y]['distance'];
             }
-            $data[$i]['goal'] = $goal[$i];
         }
 
-        //목표 성공여부 체크
-        for ($i = 0; $i < count($goal); $i++) {
-            if ($data[$i]['distance'] >= $goal[$i]['goalDistance']) {
-                Goal::where('id', '=', $goal[$i]['id'])->update(['success' => true]);
-                // $data[$i]['message'] = $data[$i]['goal']->title . " 달성!";
-                return response([
-                    $data,
-                ], 200);
+        //기간내 달리기 누적거리
+        for ($i = 0; $i < count($run_array); $i++) {
+            for ($y = 0; $y < count($run_array[$i]); $y++) {
+                $run_data[$i]['distance'] += $run_array[$i][$y]['distance'];
             }
         }
 
-        if ($data) {
-            return response($data, 200);
+        //자전거 목표 성공여부 체크
+        for ($i = 0; $i < count($goal); $i++) {
+            if ($data[$i]['distance'] >= $goal[$i]['goalDistance']) {
+                Goal::where('id', '=', $goal[$i]['id'])->update(['success' => true]);
+            }
+            $goal[$i]['progress'] = $data[$i];
+        }
+
+        //달리기 목표 성공여부 체크
+        for ($i = 0; $i < count($run_goal); $i++) {
+            if ($run_data[$i]['distance'] >= $run_goal[$i]['goalDistance']) {
+                Goal::where('id', '=', $run_goal[$i]['id'])->update(['success' => true]);
+            }
+            $run_goal[$i]['progress'] = $run_data[$i];
+        }
+
+
+        // return $run_goal;
+        $myGoal['bike'] = $goal;
+        $myGoal['run'] = $run_goal;
+
+
+        if ($myGoal) {
+            return response($myGoal, 200);
         } else {
             return response('', 204);
         }

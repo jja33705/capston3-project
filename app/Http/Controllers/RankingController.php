@@ -109,4 +109,4 @@ class RankingController extends Controller
 }
 
 
-//체크포인트 랭킹 목표
+//체크포인트  목표
