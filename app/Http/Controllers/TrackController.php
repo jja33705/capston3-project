@@ -63,9 +63,21 @@ class TrackController extends Controller
         //내 기존 기록 불러옴
         $myCheckPoint = CheckPoint::where('checkPoint', '=', $checkPoint)->where('track_id', '=', $track_id)->where('user_id', '=', $user->id)->first();
 
+        $allCheckPoint = CheckPoint::where('checkPoint', '=', $checkPoint)->where('track_id', '=', $track_id)->where('user_id', '!=', $user->id)->orderby('time')->get();
+
         //트랙에서 내 기록이 없거나 더 좋은 결과를 냈을 경우 체크포인트 저장
         if ($myCheckPoint == null) {
-            //새로운 더 좋은 기록으로 바꿈
+            if (count($allCheckPoint) == 0) {
+                CheckPoint::create([
+                    'user_id' => $user->id,
+                    'track_id' => $track_id,
+                    'time' => $time,
+                    'checkPoint' => $checkPoint
+                ]);
+                return response([
+                    'rank' => 100
+                ], 200);
+            }
             CheckPoint::create([
                 'user_id' => $user->id,
                 'track_id' => $track_id,
@@ -76,14 +88,20 @@ class TrackController extends Controller
             CheckPoint::where('user_id', '=', $user->id)->where('checkPoint', '=', $checkPoint)->where('track_id', '=', $track_id)->update(['time' => $time]);
         }
 
-        $allCheckPoint = CheckPoint::where('checkPoint', '=', $checkPoint)->where('track_id', '=', $track_id)->where('user_id', '!=', $user->id)->orderby('time')->get();
 
+        if (count($allCheckPoint) == 0) {
+            return response([
+                'rank' => 100
+            ], 200);
+        }
 
+        //제일 늦은 시간 보다 늦으면 상위 100%
         if ($allCheckPoint[count($allCheckPoint) - 1]['time'] < $time) {
             return response([
                 'rank' => 100
             ], 200);
         }
+
 
         for ($i = 0; $i < count($allCheckPoint); $i++) {
             $allCheckPoint[$i]['rank'] = ($i + 1) / count($allCheckPoint) * 100;
@@ -95,6 +113,11 @@ class TrackController extends Controller
                 return response([
                     'rank' => $allCheckPoint[$i]['rank']
                 ], 200);
+                // } else if ($allCheckPoint[$i]['time'] < $time) {
+                //     return response([
+                //         'rank' => ($i + 1) / (count($allCheckPoint) + 1) * 100
+                //     ], 200);
+                // }
             }
         }
     }
