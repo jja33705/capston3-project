@@ -13,6 +13,27 @@ use Illuminate\Support\Facades\Http;
 
 class RecordController extends Controller
 {
+    public function distance(Request $request)
+    {
+        $user = Auth::user();
+        $event = $request->query('event');
+
+        $data = Post::where('user_id', '=', $user->id)->where('event', '=', $event)->get('distance');
+
+        $distance = 0;
+        for ($i = 0; $i < count($data); $i++) {
+            $distance += $data[$i]['distance'];
+        }
+
+        if ($distance) {
+            return response([
+                "distance" => round($distance)
+            ], 200);
+        } else {
+            return response('', 204);
+        }
+    }
+
     public function type()
     {
         $user_id = Auth::user()->id;
