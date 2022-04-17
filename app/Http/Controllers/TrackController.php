@@ -113,11 +113,6 @@ class TrackController extends Controller
                 return response([
                     'rank' => $allCheckPoint[$i]['rank']
                 ], 200);
-                // } else if ($allCheckPoint[$i]['time'] < $time) {
-                //     return response([
-                //         'rank' => ($i + 1) / (count($allCheckPoint) + 1) * 100
-                //     ], 200);
-                // }
             }
         }
     }
