@@ -110,7 +110,7 @@ class GoalController extends Controller
             if ($data[$i]['distance'] >= $goal[$i]['goalDistance']) {
                 Goal::where('id', '=', $goal[$i]['id'])->update(['success' => true]);
             }
-            $goal[$i]['progress'] = round($data[$i]['distance'] / $goal[$i]['goalDistance'] * 100);
+            $goal[$i]['progress'] = floor($data[$i]['distance'] / $goal[$i]['goalDistance'] * 100);
             if ($goal[$i]['progress'] >= 100) {
                 $goal[$i]['progress'] = 100;
             }
@@ -121,7 +121,7 @@ class GoalController extends Controller
             if ($run_data[$i]['distance'] >= $run_goal[$i]['goalDistance']) {
                 Goal::where('id', '=', $run_goal[$i]['id'])->update(['success' => true]);
             }
-            $run_goal[$i]['progress'] = round($run_data[$i]['distance'] / $run_goal[$i]['goalDistance'] * 100);
+            $run_goal[$i]['progress'] = floor($run_data[$i]['distance'] / $run_goal[$i]['goalDistance'] * 100);
             if ($run_goal[$i]['progress'] >= 100) {
                 $run_goal[$i]['progress'] = 100;
             }
