@@ -45,7 +45,7 @@ Route::get('/auth/login/google/callback', [GoogleAuthController::class, 'callbac
 Route::get('/gpsData', [GpsDataController::class, 'gpsData']);
 Route::get('/gpsData/check', [GpsDataController::class, 'gpsDataCheck']);
 
-//목표관리
+//날짜별 누적 거리
 
 
 

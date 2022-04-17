@@ -296,8 +296,8 @@ class PostController extends Controller
          한주의 기록인지 아닌지 대소 비교
          그것을 요일별로 나눈다
         */
-        $user = Auth::user();
-        $event = $request->event;
+        $user = Auth::user()->id;
+        $event = $request->query('event');
 
         //주간 체크
         $today = time();
@@ -332,19 +332,19 @@ class PostController extends Controller
         $fiveDayAgo = 0;
         $sixDayAgo = 0;
 
-        $day3 = Post::where('user_id', '=', $user->id)->where('date', '=', $day2)->where('event', '=', $event)->get('distance');
+        $day3 = Post::where('user_id', '=', $user)->where('date', '=', $day2)->where('event', '=', $event)->get('distance');
 
-        $one3 = Post::where('user_id', '=', $user->id)->where('date', '=', $one2)->where('event', '=', $event)->get('distance');
+        $one3 = Post::where('user_id', '=', $user)->where('date', '=', $one2)->where('event', '=', $event)->get('distance');
 
-        $two3 = Post::where('user_id', '=', $user->id)->where('date', '=', $two2)->where('event', '=', $event)->get('distance');
+        $two3 = Post::where('user_id', '=', $user)->where('date', '=', $two2)->where('event', '=', $event)->get('distance');
 
-        $three3 = Post::where('user_id', '=', $user->id)->where('date', '=', $three2)->where('event', '=', $event)->get('distance');
+        $three3 = Post::where('user_id', '=', $user)->where('date', '=', $three2)->where('event', '=', $event)->get('distance');
 
-        $four3 = Post::where('user_id', '=', $user->id)->where('date', '=', $four2)->where('event', '=', $event)->get('distance');
+        $four3 = Post::where('user_id', '=', $user)->where('date', '=', $four2)->where('event', '=', $event)->get('distance');
 
-        $five3 = Post::where('user_id', '=', $user->id)->where('date', '=', $five2)->where('event', '=', $event)->get('distance');
+        $five3 = Post::where('user_id', '=', $user)->where('date', '=', $five2)->where('event', '=', $event)->get('distance');
 
-        $six3 = Post::where('user_id', '=', $user->id)->where('date', '=', $six2)->where('event', '=', $event)->get('distance');
+        $six3 = Post::where('user_id', '=', $user)->where('date', '=', $six2)->where('event', '=', $event)->get('distance');
 
 
         for ($i = 0; $i < count($day3); $i++) {
