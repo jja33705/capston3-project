@@ -171,12 +171,16 @@ class PostController extends Controller
 
 
         $opponent_post = array();
+        $opponent_user = array();
 
         for ($i = 0; $i < count($post); $i++) {
             if ($post[$i]->opponent_id) {
                 $op_post = Post::where('id', '=', $post[$i]->opponent_id)->first();
+                $op_user = User::where('id', '=', $op_post->user_id)->first();
                 array_push($opponent_post, $op_post);
+                array_push($opponent_user, $op_user);
                 $post[$i]["opponent_post"] = $opponent_post[$i];
+                $post[$i]['opponent_post']['user'] = $opponent_user[$i];
             } else {
                 return response(
                     $post,
@@ -184,7 +188,6 @@ class PostController extends Controller
                 );
             }
         }
-
 
         //gpsData를 요청해서 같이 묶어서 보내줘야함
         // for ($i = 0; $i < $post->count(); $i++) {
