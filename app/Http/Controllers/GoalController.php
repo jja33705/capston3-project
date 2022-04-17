@@ -7,6 +7,8 @@ use App\Models\Goal;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use League\CommonMark\Extension\SmartPunct\EllipsesParser;
 
 class GoalController extends Controller
 {
@@ -22,29 +24,30 @@ class GoalController extends Controller
         $event = $request->event;
 
         $user = Auth::user();
-        //목표 생성
-        $goal = Goal::where('user_id', '=', $user->id)->get();
 
-        // for ($i = 0; $i < count($goal); $i++) {
-        //     if ($goal[$i]->firstDate <= $firstDate || $goal[$i]->lastDate >= $lastDate) {
-        //         return response(['message' => '겹치는 날짜에는 목표를 설정 할 수 없습니다'], 200);
-        //     }
-        // }
+        // (('사용자입력시작일' <= DB시작일 and DB시작일 <= '사용자입력종료일') or ('사용자입력시작일' <= DB종료일 and DB종료일 <= '사용자입력종료일') or (DB시작일 <= '사용자입력시작일' and '사용자입력종료일' <= DB종료일))
+        $query_one = DB::table('goals')->where('user_id', '=', $user->id)->where('firstDate', '>=', $firstDate)->where('firstDate', '<=', $lastDate);
 
-        $goal = Goal::create([
-            'user_id' => $user->id,
-            'title' => $title,
-            'goalDistance' => $goalDistance,
-            'firstDate' => $firstDate,
-            'lastDate' => $lastDate,
-            'success' => false,
-            'event' => $event
-        ]);
+        $query_two = DB::table('goals')->where('user_id', '=', $user->id)->where('lastDate', '>=', $firstDate)->where('lastDate', '<=', $lastDate);
 
-        if ($goal) {
-            return response($goal, 201);
+        $query_three = DB::table('goals')->where('user_id', '=', $user->id)->where('firstDate', '<=', $firstDate)->where('lastDate', '>=', $lastDate)->union($query_one)->union($query_two)->get();
+
+        if (count($query_three) == 0) {
+            return response([
+                'goal' => Goal::create([
+                    'user_id' => $user->id,
+                    'title' => $title,
+                    'goalDistance' => $goalDistance,
+                    'firstDate' => $firstDate,
+                    'lastDate' => $lastDate,
+                    'success' => false,
+                    'event' => $event
+                ])
+            ], 201);
         } else {
-            return response('', 400);
+            return response([
+                'message' => '겹치는 날짜는 목표를 설정 할 수 없습니다'
+            ]);
         }
     }
 
