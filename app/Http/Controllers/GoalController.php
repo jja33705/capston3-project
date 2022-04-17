@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CheckPoint;
 use App\Models\Goal;
 use App\Models\Post;
 use Illuminate\Http\Request;
@@ -22,6 +23,14 @@ class GoalController extends Controller
 
         $user = Auth::user();
         //목표 생성
+        $goal = Goal::where('user_id', '=', $user->id)->get();
+
+        // for ($i = 0; $i < count($goal); $i++) {
+        //     if ($goal[$i]->firstDate <= $firstDate || $goal[$i]->lastDate >= $lastDate) {
+        //         return response(['message' => '겹치는 날짜에는 목표를 설정 할 수 없습니다'], 200);
+        //     }
+        // }
+
         $goal = Goal::create([
             'user_id' => $user->id,
             'title' => $title,
@@ -101,7 +110,10 @@ class GoalController extends Controller
             if ($data[$i]['distance'] >= $goal[$i]['goalDistance']) {
                 Goal::where('id', '=', $goal[$i]['id'])->update(['success' => true]);
             }
-            $goal[$i]['progress'] = $data[$i]['distance'] / $goal[$i]['goalDistance'] * 100;
+            $goal[$i]['progress'] = round($data[$i]['distance'] / $goal[$i]['goalDistance'] * 100);
+            if ($goal[$i]['progress'] >= 100) {
+                $goal[$i]['progress'] = 100;
+            }
         }
 
         //달리기 목표 성공여부 체크
@@ -109,7 +121,7 @@ class GoalController extends Controller
             if ($run_data[$i]['distance'] >= $run_goal[$i]['goalDistance']) {
                 Goal::where('id', '=', $run_goal[$i]['id'])->update(['success' => true]);
             }
-            $run_goal[$i]['progress'] = $run_data[$i]['distance'] / $run_goal[$i]['goalDistance'] * 100;
+            $run_goal[$i]['progress'] = round($run_data[$i]['distance'] / $run_goal[$i]['goalDistance'] * 100);
             if ($run_goal[$i]['progress'] >= 100) {
                 $run_goal[$i]['progress'] = 100;
             }
