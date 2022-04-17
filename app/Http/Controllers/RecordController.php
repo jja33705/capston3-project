@@ -27,7 +27,7 @@ class RecordController extends Controller
 
         if ($distance) {
             return response([
-                "distance" => round($distance)
+                "distance" => $distance
             ], 200);
         } else {
             return response('', 204);
