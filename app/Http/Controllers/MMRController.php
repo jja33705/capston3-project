@@ -104,3 +104,6 @@ class MMRController extends Controller
         }
     }
 }
+
+
+//1km부터 4/1지점으로 

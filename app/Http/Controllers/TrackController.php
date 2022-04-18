@@ -13,7 +13,6 @@ class TrackController extends Controller
     {
         $gpsData = $request->gpsData;
 
-
         $response = Http::post('http://13.124.24.179/api/tracks', $gpsData);
         return json_decode($response, true);
     }

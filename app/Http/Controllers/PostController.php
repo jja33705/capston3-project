@@ -59,7 +59,7 @@ class PostController extends Controller
 
 
         if ($request->track_id) {
-            $gpsData["track_id"] = $request->track_id;
+            $gpsData["trackId"] = $request->track_id;
         }
 
         //Node에서 GPS_data_id를 받아와서 활동에 저장
