@@ -117,8 +117,6 @@ class GoalController extends Controller
             }
         }
 
-        return $run_data;
-
         //자전거 목표 성공여부 체크
         for ($i = 0; $i < count($goal); $i++) {
             if ($data[$i]['distance'] >= $goal[$i]['goalDistance']) {
@@ -141,7 +139,6 @@ class GoalController extends Controller
             }
         }
 
-        // return $run_goal;
         $myGoal['bike'] = $goal;
         $myGoal['run'] = $run_goal;
 
