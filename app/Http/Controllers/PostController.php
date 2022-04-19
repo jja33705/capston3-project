@@ -189,6 +189,7 @@ class PostController extends Controller
             }
         }
 
+
         //gpsData를 요청해서 같이 묶어서 보내줘야함
         // for ($i = 0; $i < $post->count(); $i++) {
         //     $gpsId = $post[$i]->gps_id;
@@ -197,7 +198,6 @@ class PostController extends Controller
         //     array_push($gpsData, $data);
         //     $post[$i]["gpsData"] = $gpsData[$i];
         // }
-
         if ($post) {
             return response(
                 $post,
