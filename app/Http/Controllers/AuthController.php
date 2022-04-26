@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\Console\Input\Input;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
@@ -23,15 +24,13 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-
-
         $user = User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
             'sex' => $request->input('sex'),
             'weight' => $request->input('weight'),
-            'profile' => $request->input('profile'),
+            'profile' => "https://run-images.s3.ap-northeast-2.amazonaws.com/default-profile/KakaoTalk_Photo_2022-04-17-14-55-41.png",
             'birth' => $request->input('birth'),
             'introduce' => $request->input('introduce'),
             'location' => $request->input('location'),
