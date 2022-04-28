@@ -54,7 +54,7 @@ Route::middleware('auth:sanctum')->group(function () {
     //유저확인, 로그아웃, 유저검색, 프로필편집
     Route::get('user', [AuthController::class, 'user']);
     Route::post('logout', [AuthController::class, 'logout']);
-    Route::post('userSearch', [AuthController::class, 'userSearch']);
+    Route::get('userSearch', [AuthController::class, 'userSearch']);
     Route::post('/profile', [AuthController::class, 'profile']);
 
 

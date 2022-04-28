@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DayRecord;
+use App\Models\Follow;
 use App\Models\Image;
 use App\Models\RunRecord;
 use App\Models\User;
@@ -94,9 +95,24 @@ class AuthController extends Controller
 
     public function userSearch(Request $request)
     {
-        $keyword = $request->keyword;
+        $keyword = $request->query('keyword');
 
         $user = User::where('name', 'like', '%' . $keyword . '%')->paginate(10);
+
+        $follow = Follow::where("follower_id", '=', Auth::user()->id)->get('following_id');
+
+        $user_array = array();
+        $follow_array = array();
+
+        for ($i = 0; $i < count($follow); $i++) {
+            array_push($follow_array, $follow[$i]->following_id);
+        }
+
+        for ($i = 0; $i < count($user); $i++) {
+            // array_push($user_array, $user[$i]->id);
+            $user[$i]['followCheck'] = in_array($user[$i]->id, $follow_array);
+        }
+
         return response(
             $user,
             200
