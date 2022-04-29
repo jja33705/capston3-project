@@ -97,19 +97,19 @@ class AuthController extends Controller
     {
         $keyword = $request->query('keyword');
 
-        $user = User::where('name', 'like', '%' . $keyword . '%')->paginate(10);
+        if ($keyword) {
+            $user = User::where('name', 'like', '%' . $keyword . '%')->paginate(10);
+        } else {
+            return response('', 204);
+        }
 
+        //팔로우체크하기
         $follow = Follow::where("follower_id", '=', Auth::user()->id)->get('following_id');
-
-        $user_array = array();
         $follow_array = array();
-
         for ($i = 0; $i < count($follow); $i++) {
             array_push($follow_array, $follow[$i]->following_id);
         }
-
         for ($i = 0; $i < count($user); $i++) {
-            // array_push($user_array, $user[$i]->id);
             $user[$i]['followCheck'] = in_array($user[$i]->id, $follow_array);
         }
 

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use phpDocumentor\Reflection\Types\Boolean;
 use SebastianBergmann\Environment\Console;
 
 class PostController extends Controller
@@ -172,6 +173,9 @@ class PostController extends Controller
 
         $opponent_post = array();
         $opponent_user = array();
+        $array = array();
+        $array2 = array();
+
 
         for ($i = 0; $i < count($post); $i++) {
             if ($post[$i]->opponent_id) {
@@ -181,15 +185,17 @@ class PostController extends Controller
                 array_push($opponent_user, $op_user);
                 $post[$i]["opponent_post"] = $opponent_post[$i];
                 $post[$i]['opponent_post']['user'] = $opponent_user[$i];
-            } else {
-                return response(
-                    $post,
-                    200
-                );
             }
+            if (count($post[$i]->likes) !== 0) {
+                for ($y = 0; $y < count($post[$i]->likes); $y++) {
+                    array_push($array, $post[$i]->likes[$y]['id']);
+                }
+                array_push($array2, $array);
+            } else {
+                array_push($array2, []);
+            }
+            $post[$i]['likeCheck'] = in_array($id, $array2[$i]);
         }
-
-
         //gpsData를 요청해서 같이 묶어서 보내줘야함
         // for ($i = 0; $i < $post->count(); $i++) {
         //     $gpsId = $post[$i]->gps_id;
