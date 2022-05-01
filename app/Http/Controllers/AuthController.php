@@ -154,4 +154,15 @@ class AuthController extends Controller
 
         return $user;
     }
+
+    public function fcmToken(Request $request) {
+        $user = Auth::user();
+
+        $user->fcm_token = $request->fcmToken;
+        $user->save();
+
+        return response([
+            "message" => "Success"
+        ], 200);
+    }
 }

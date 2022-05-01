@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use phpDocumentor\Reflection\Types\Boolean;
 use SebastianBergmann\Environment\Console;
+use App\Services\FCMService;
 
 class PostController extends Controller
 {
@@ -196,6 +197,19 @@ class PostController extends Controller
             }
             $post[$i]['likeCheck'] = in_array($id, $array2[$i]);
         }
+
+        // fcmToken exemple
+        FCMService::send(
+            Auth::user()->fcm_token,
+            [
+                'title' => '이게 뭐노',
+                'body' => '이게 가나?',
+            ],
+            [
+                'message' => ['허허허허허헣허']
+            ],
+        );
+
         //gpsData를 요청해서 같이 묶어서 보내줘야함
         // for ($i = 0; $i < $post->count(); $i++) {
         //     $gpsId = $post[$i]->gps_id;

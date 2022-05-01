@@ -51,11 +51,12 @@ Route::get('/gpsData/check', [GpsDataController::class, 'gpsDataCheck']);
 
 //현재로그인 확인
 Route::middleware('auth:sanctum')->group(function () {
-    //유저확인, 로그아웃, 유저검색, 프로필편집
+    //유저확인, 로그아웃, 유저검색, 프로필편집, fcmToken
     Route::get('user', [AuthController::class, 'user']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('userSearch', [AuthController::class, 'userSearch']);
     Route::post('/profile', [AuthController::class, 'profile']);
+    Route::patch('/fcmToken', [AuthController::class, 'fcmToken']);
 
 
     // 운동sns
