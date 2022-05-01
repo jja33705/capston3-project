@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\Reply;
 use App\Models\User;
 use App\Notifications\InvoicePaid;
+use App\Services\FCMService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,18 +17,30 @@ class CommentController extends Controller
     {
         $request->validate(['content' => ['required']]);
 
-        $user_id = Auth::user()->id;
+        $me = Auth::user();
         $comment = Comment::create(
             [
                 'content' => $request->content,
                 'post_id' => $id,
-                'user_id' => $user_id,
+                'user_id' => $me->id,
             ]
         );
-        $post = Post::where('id', '=', $id)->first('user_id');
+        $post = Post::where('id', '=', $id)->first();
+        $user = User::find($post->user_id);
 
-        User::find($post->user_id)->notify(new InvoicePaid("comment", $user_id, $id));
 
+        //fcm알림설정
+        FCMService::send(
+            $user->fcm_token,
+            [
+                'title' => '알림',
+                'body' => $me->name . '님이' . ' ' . '회원님의 ' . $post->title . '게시물에 댓글을 남겼습니다.'
+            ],
+            [
+                'message' => ['허허허허허헣허']
+            ],
+        );
+        User::find($post->user_id)->notify(new InvoicePaid("comment", $me->id, $id));
 
         if ($comment) {
             return response([
