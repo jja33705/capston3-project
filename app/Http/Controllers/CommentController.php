@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use App\Models\Notification;
 use App\Models\Post;
 use App\Models\Reply;
 use App\Models\User;
@@ -30,17 +31,26 @@ class CommentController extends Controller
 
 
         //fcm알림설정
+        $notification = Notification::create(
+            [
+                'mem_id' => $user->id,
+                'target_mem_id' => $me->id,
+                'not_type' => 'comment',
+                'not_message' => $me->name . '님이' . ' ' . '댓글을 남겼습니다: ' . $request->content,
+                'not_url' => '',
+                'read' => false
+            ]
+        );
         FCMService::send(
             $user->fcm_token,
             [
                 'title' => '알림',
-                'body' => $me->name . '님이' . ' ' . '회원님의 ' . $post->title . '게시물에 댓글을 남겼습니다.'
+                'body' => $me->name . '님이' . ' ' . '댓글을 남겼습니다: ' . $request->content
             ],
             [
-                'message' => ['허허허허허헣허']
+                'notId' => $notification->id
             ],
         );
-        User::find($post->user_id)->notify(new InvoicePaid("comment", $me->id, $id));
 
         if ($comment) {
             return response([

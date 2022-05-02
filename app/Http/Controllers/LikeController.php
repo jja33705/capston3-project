@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use App\Models\Post;
 use App\Models\User;
 use App\Notifications\InvoicePaid;
@@ -22,26 +23,28 @@ class LikeController extends Controller
 
         if ($like['attached']) {
             if ($like['attached'] == [$me->id]) {
+                $notification = Notification::create(
+                    [
+                        'mem_id' => $user->id,
+                        'target_mem_id' => $me->id,
+                        'not_type' => 'like',
+                        'not_message' => $me->name . '님이' . ' ' . '회원님의' . $post->title . ' 게시물을 좋아합니다',
+                        'not_url' => '',
+                        'read' => false
+                    ]
+                );
                 FCMService::send(
                     $user->fcm_token,
                     [
                         'title' => '알림',
-                        'body' => $me->name . '님' . ' ' . '회원님의 ' . $post->title . ' 게시물을 좋아합니다'
+                        'body' => $me->name . '님이' . ' ' . '회원님의 ' . $post->title . ' 게시물을 좋아합니다'
                     ],
                     [
-                        'message' => ['허허허허허헣허']
+                        'notId' => $notification->id
                     ],
                 );
             }
         }
-        // return $like['attached'] !== [$me->id];
-
-        if ($like['attached']) {
-            if ($like['attached'] == [$me->id]) {
-                User::find($post->user_id)->notify(new InvoicePaid("like", $me->id, $post->id));
-            }
-        }
-
         return $like;
     }
 }

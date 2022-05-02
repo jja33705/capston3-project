@@ -262,6 +262,12 @@ class PostController extends Controller
         }
     }
 
+    public function show($id)
+    {
+        $post = Post::with('user', 'likes', 'comment', 'image')->where('id', '=', $id)->first();
+        return response($post, 200);
+    }
+
 
     public function update(Request $request, $id)
     {

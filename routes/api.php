@@ -110,6 +110,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/followRank', [RankingController::class, 'followRank']);
     });
 
+    //트랙관련
     Route::prefix('/tracks')->group(function () {
         Route::post('/', [TrackController::class, 'addTrack']);  //트랙 만들기
         Route::get('/', [TrackController::class, 'allTracks']);  //모든 트랙 id리턴
@@ -118,11 +119,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/checkPoint', [TrackController::class, 'checkPoint']);  //체크포인트
     });
 
+    //알림
     Route::prefix('/notification')->group(function () {
-        Route::get('/unReadNotification', [NotificationController::class, 'unReadNotification']);
-        Route::get('/ReadNotification', [NotificationController::class, 'ReadNotification']);
+        Route::get('/', [NotificationController::class, 'notification']);
         Route::get('/read', [NotificationController::class, 'read']);
-        Route::delete('/delete', [NotificationController::class, 'delete']);
+        Route::delete('/delete/{id}', [NotificationController::class, 'delete']);
     });
 
     Route::prefix('/goal')->group(function () {
