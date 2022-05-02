@@ -82,10 +82,9 @@ class NotificationController extends Controller
         }
     }
 
-    public function read(Request $request)
+    public function read($id)
     {
-        $not_id = $request->query('notId');
-        ModelsNotification::where('not_id', '=', $not_id)->update(['read' => true]);
+        ModelsNotification::where('not_id', '=', $id)->update(['read' => true]);
     }
 
     public function delete($id)

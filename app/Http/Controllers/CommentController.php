@@ -60,7 +60,8 @@ class CommentController extends Controller
                 'body' => $me->name . '님이' . ' ' . '댓글을 남겼습니다: ' . $request->content
             ],
             [
-                'notId' => $notification->id
+                'postId' => $post->id,
+                'type' => 'comment'
             ],
         );
 

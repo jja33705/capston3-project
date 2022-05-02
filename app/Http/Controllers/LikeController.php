@@ -43,7 +43,8 @@ class LikeController extends Controller
                         'body' => $me->name . '님이' . ' ' . '회원님의 ' . $post->title . ' 게시물을 좋아합니다'
                     ],
                     [
-                        'notId' => $notification->id
+                        'postId' => $post->id,
+                        'type' => 'like'
                     ],
                 );
             }

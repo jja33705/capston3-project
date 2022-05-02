@@ -41,7 +41,8 @@ class FollowsController extends Controller
                     'body' => $me->name . '님이' . ' ' . '회원님을 팔로우 합니다'
                 ],
                 [
-                    'notId' => $notification->id
+                    'id' => $user->id,
+                    'type' => 'follow'
                 ],
             );
         };
