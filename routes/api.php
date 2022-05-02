@@ -122,7 +122,7 @@ Route::middleware('auth:sanctum')->group(function () {
     //알림
     Route::prefix('/notification')->group(function () {
         Route::get('/', [NotificationController::class, 'notification']);
-        Route::get('/read', [NotificationController::class, 'read']);
+        Route::get('/read/{id}', [NotificationController::class, 'read']);
         Route::delete('/delete/{id}', [NotificationController::class, 'delete']);
     });
 
