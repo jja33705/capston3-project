@@ -20,6 +20,9 @@ class LikeController extends Controller
         $user = User::find($post->user_id);
         $like = $post->likes()->toggle($me->id);
 
+        if ($me->id == $user->id) {
+            return $like;
+        }
 
         if ($like['attached']) {
             if ($like['attached'] == [$me->id]) {

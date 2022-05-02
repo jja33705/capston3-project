@@ -29,6 +29,18 @@ class CommentController extends Controller
         $post = Post::where('id', '=', $id)->first();
         $user = User::find($post->user_id);
 
+        if ($me->id == $user->id) {
+            if ($comment) {
+                return response([
+                    'message' => ['댓글달기 성공'],
+                    'comment' => $comment
+                ], 201);
+            } else {
+                return response([
+                    'message' => ['실패']
+                ], 401);
+            }
+        }
 
         //fcm알림설정
         $notification = Notification::create(
