@@ -198,17 +198,6 @@ class PostController extends Controller
             $post[$i]['likeCheck'] = in_array($id, $array2[$i]);
         }
 
-        // fcmToken exemple
-        FCMService::send(
-            Auth::user()->fcm_token,
-            [
-                'title' => '이게 뭐노',
-                'body' => '이게 가나?',
-            ],
-            [
-                'message' => ['허허허허허헣허']
-            ],
-        );
 
         //gpsData를 요청해서 같이 묶어서 보내줘야함
         // for ($i = 0; $i < $post->count(); $i++) {

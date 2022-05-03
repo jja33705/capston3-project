@@ -74,7 +74,6 @@ class AuthController extends Controller
         ])->withCookie($cookie);
     }
 
-
     public function user()
     {
         $user_id = Auth::user()->id;

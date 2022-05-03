@@ -42,11 +42,12 @@ Route::get('/auth/login/google', [GoogleAuthController::class, 'redirect']);
 Route::get('/auth/login/google/callback', [GoogleAuthController::class, 'callback']);
 
 //gps데이터 관리
-Route::get('/gpsData', [GpsDataController::class, 'gpsData']);
-Route::get('/gpsData/check', [GpsDataController::class, 'gpsDataCheck']);
+// Route::get('/gpsData', [GpsDataController::class, 'gpsData']);
+// Route::get('/gpsData/check', [GpsDataController::class, 'gpsDataCheck']);
 
 //날짜별 누적 거리
-
+Route::get('/gpsData', [GpsDataController::class, 'gpsData']);
+Route::get('/gpsData/check', [GpsDataController::class, 'gpsDataCheck']);
 
 
 //현재로그인 확인
@@ -126,6 +127,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/delete/{id}', [NotificationController::class, 'delete']);
     });
 
+    //목표
     Route::prefix('/goal')->group(function () {
         Route::post('/', [GoalController::class, 'goal']);
         Route::get('/check', [GoalController::class, 'checkGoal']);
