@@ -87,6 +87,8 @@ class AuthController extends Controller
         $user->tokens()->delete();
 
         $cookie = Cookie::forget('login_token');
+        User::where('id', '=', $user->id)->update(['fcm_token' => null]);
+
         return response([
             'message' => 'Success'
         ], 200)->withCookie($cookie);

@@ -42,12 +42,10 @@ Route::get('/auth/login/google', [GoogleAuthController::class, 'redirect']);
 Route::get('/auth/login/google/callback', [GoogleAuthController::class, 'callback']);
 
 //gps데이터 관리
-// Route::get('/gpsData', [GpsDataController::class, 'gpsData']);
-// Route::get('/gpsData/check', [GpsDataController::class, 'gpsDataCheck']);
-
-//날짜별 누적 거리
 Route::get('/gpsData', [GpsDataController::class, 'gpsData']);
 Route::get('/gpsData/check', [GpsDataController::class, 'gpsDataCheck']);
+
+
 
 
 //현재로그인 확인
