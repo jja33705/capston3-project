@@ -74,7 +74,6 @@ class AuthController extends Controller
         ])->withCookie($cookie);
     }
 
-
     public function user()
     {
         $user_id = Auth::user()->id;
@@ -88,6 +87,8 @@ class AuthController extends Controller
         $user->tokens()->delete();
 
         $cookie = Cookie::forget('login_token');
+        User::where('id', '=', $user->id)->update(['fcm_token' => null]);
+
         return response([
             'message' => 'Success'
         ], 200)->withCookie($cookie);
@@ -138,7 +139,6 @@ class AuthController extends Controller
     public function profile(Request $request)
     {
         $user = Auth::user();
-
         $user->name = $request->name;
         $user->weight = $request->weight;
         $user->birth = $request->birth;
@@ -155,7 +155,8 @@ class AuthController extends Controller
         return $user;
     }
 
-    public function fcmToken(Request $request) {
+    public function fcmToken(Request $request)
+    {
         $user = Auth::user();
 
         $user->fcm_token = $request->fcmToken;

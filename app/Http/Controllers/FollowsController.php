@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\follow;
+use App\Models\Notification;
 use App\Models\User;
 use App\Notifications\InvoicePaid;
+use App\Services\FCMService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,7 +24,27 @@ class FollowsController extends Controller
         }
 
         if ($follow['attached']) {
-            User::find($user->id)->notify(new InvoicePaid("follow", $me->id, "null"));
+            $notification = Notification::create(
+                [
+                    'mem_id' => $user->id,
+                    'target_mem_id' => $me->id,
+                    'not_type' => 'follow',
+                    'not_message' => $me->name . '님이' . ' ' . '회원님을 팔로우 하기 시작했습니다',
+                    'not_url' => '',
+                    'read' => false
+                ]
+            );
+            FCMService::send(
+                $user->fcm_token,
+                [
+                    'title' => '알림',
+                    'body' => $me->name . '님이' . ' ' . '회원님을 팔로우 합니다'
+                ],
+                [
+                    'id' => $user->id,
+                    'type' => 'follow'
+                ],
+            );
         };
 
         return response(

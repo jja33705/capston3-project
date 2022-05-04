@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use App\Models\Post;
 use App\Models\User;
 use App\Notifications\InvoicePaid;
+use App\Services\FCMService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,18 +14,42 @@ class LikeController extends Controller
 {
     public function store(Post $post)
     {
-        //토글을 이용해서 좋아요 설정
+        //나
         $me = Auth::user();
+        //상대방
+        $user = User::find($post->user_id);
         $like = $post->likes()->toggle($me->id);
 
-        // return $like['attached'] !== [$me->id];
+        if ($me->id == $user->id) {
+            return $like;
+        }
 
         if ($like['attached']) {
             if ($like['attached'] == [$me->id]) {
-                User::find($post->user_id)->notify(new InvoicePaid("like", $me->id, $post->id));
+                $notification = Notification::create(
+                    [
+                        'mem_id' => $user->id,
+                        'target_mem_id' => $me->id,
+                        'not_type' => 'like',
+                        'not_message' => $me->name . '님이' . ' ' . '회원님의' . $post->title . ' 게시물을 좋아합니다',
+                        'not_url' => '',
+                        'read' => false,
+                        'post_id' => $post->id
+                    ]
+                );
+                FCMService::send(
+                    $user->fcm_token,
+                    [
+                        'title' => '알림',
+                        'body' => $me->name . '님이' . ' ' . '회원님의 ' . $post->title . ' 게시물을 좋아합니다'
+                    ],
+                    [
+                        'postId' => $post->id,
+                        'type' => 'like'
+                    ],
+                );
             }
         }
-
         return $like;
     }
 }

@@ -45,7 +45,6 @@ Route::get('/auth/login/google/callback', [GoogleAuthController::class, 'callbac
 Route::get('/gpsData', [GpsDataController::class, 'gpsData']);
 Route::get('/gpsData/check', [GpsDataController::class, 'gpsDataCheck']);
 
-//날짜별 누적 거리
 
 
 
@@ -70,6 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id}', [PostController::class, "destroy"]);
         //일주일 간격으로 요일별 누적 거리 구하는 라우터
         Route::get('/weekRecord', [PostController::class, "weekRecord"]);
+        Route::get('/profile/{id}', [PostController::class, "profile"]);
     });
 
     // 팔로우
@@ -81,6 +81,7 @@ Route::middleware('auth:sanctum')->group(function () {
     //댓글
     Route::prefix('comment')->group(function () {
         Route::post('/store/{id}', [CommentController::class, 'store']);
+        Route::get('/index/{id}', [CommentController::class, 'index']);
         Route::delete('/destroy/{id}', [CommentController::class, 'destroy']);
         Route::post('/store/reply/{id}', [CommentController::class, 'reply']);
     });
@@ -110,6 +111,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/followRank', [RankingController::class, 'followRank']);
     });
 
+    //트랙관련
     Route::prefix('/tracks')->group(function () {
         Route::post('/', [TrackController::class, 'addTrack']);  //트랙 만들기
         Route::get('/', [TrackController::class, 'allTracks']);  //모든 트랙 id리턴
@@ -118,13 +120,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/checkPoint', [TrackController::class, 'checkPoint']);  //체크포인트
     });
 
+    //알림
     Route::prefix('/notification')->group(function () {
-        Route::get('/unReadNotification', [NotificationController::class, 'unReadNotification']);
-        Route::get('/ReadNotification', [NotificationController::class, 'ReadNotification']);
-        Route::get('/read', [NotificationController::class, 'read']);
-        Route::delete('/delete', [NotificationController::class, 'delete']);
+        Route::get('/', [NotificationController::class, 'notification']);
+        Route::get('/read/{id}', [NotificationController::class, 'read']);
+        Route::delete('/delete/{id}', [NotificationController::class, 'delete']);
     });
 
+    //목표
     Route::prefix('/goal')->group(function () {
         Route::post('/', [GoalController::class, 'goal']);
         Route::get('/check', [GoalController::class, 'checkGoal']);

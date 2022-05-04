@@ -22,17 +22,31 @@ use App\Services\FCMService;
 
 class PostController extends Controller
 {
-    public function image(Request $request)
+    public function profile($id)
     {
-        if ($request->hasFile("img")) {
-            for ($i = 0; $i < count($request->img); $i++) {
-                $path[$i] = $request->img[$i]->store('image', 's3');
-                Image::create([
-                    'image' => basename($path[$i]),
-                    'url' => Storage::url($path[$i]),
-                    'post_id' => 1
-                ]);
+        $me = Auth::user();
+        $user = User::find($id);
+
+        $followings = Follow::where('follower_id', '=', $me->id)->get('following_id');
+
+        $follow = array();
+        for ($i = 0; $i < count($followings); $i++) {
+            array_push($follow, $followings[$i]['following_id']);
+        }
+
+
+        if ($user) {
+            if (in_array($user->id, $follow)) {
+                $profile = User::with(['posts'])->where('id', '=', $id)->first();
+                return response($profile, 200);
+            } else if ($user->id == $me->id) {
+                $profile = User::with(['posts'])->where('id', '=', $id)->first();
+                return response($profile, 200);
+            } else {
+                return response($user, 200);
             }
+        } else {
+            return response('', 204);
         }
     }
 
@@ -169,7 +183,7 @@ class PostController extends Controller
         array_push($array, $id);
 
         //팔로잉한 아이디의 포스트만 시간별로 출력
-        $post = Post::with(['user', 'likes', 'comment', 'image', 'mapImage'])->whereIn('user_id', $array)->where('range', 'public')->orderby('created_at', 'desc')->paginate(10);
+        $post = Post::with(['user', 'likes', 'image'])->whereIn('user_id', $array)->where('range', 'public')->orderby('created_at', 'desc')->paginate(10);
 
 
         $opponent_post = array();
@@ -198,6 +212,7 @@ class PostController extends Controller
             $post[$i]['likeCheck'] = in_array($id, $array2[$i]);
         }
 
+<<<<<<< HEAD
         // fcmToken exemple
         FCMService::send(
             Auth::user()->fcm_token,
@@ -210,6 +225,8 @@ class PostController extends Controller
                 "message2" => '후훟훟후후후훟후'
             ],
         );
+=======
+>>>>>>> 92eedf46047c6d2b3977fad82b3e05bb44175aed
 
         //gpsData를 요청해서 같이 묶어서 보내줘야함
         // for ($i = 0; $i < $post->count(); $i++) {
@@ -261,6 +278,12 @@ class PostController extends Controller
         } else {
             return response('', 204);
         }
+    }
+
+    public function show($id)
+    {
+        $post = Post::with('user', 'likes', 'image')->where('id', '=', $id)->first();
+        return response($post, 200);
     }
 
 
@@ -410,8 +433,6 @@ class PostController extends Controller
         // //요일별 저장 함수 실행
         // return $this->weekData($post_distance, $post_date, $count);
     }
-
-
 
     // //날짜 데이터를 보고 요일별로 나누어 요일별 누적 거리 계산
     // protected function weekData($post_distance, $post_date, $count)
