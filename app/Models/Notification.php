@@ -14,6 +14,7 @@ class Notification extends Model
         "target_mem_id",
         "not_type",
         "not_message",
-        "read"
+        "read",
+        "post_id"
     ];
 }

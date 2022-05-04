@@ -33,7 +33,8 @@ class LikeController extends Controller
                         'not_type' => 'like',
                         'not_message' => $me->name . '님이' . ' ' . '회원님의' . $post->title . ' 게시물을 좋아합니다',
                         'not_url' => '',
-                        'read' => false
+                        'read' => false,
+                        'post_id' => $post->id
                     ]
                 );
                 FCMService::send(

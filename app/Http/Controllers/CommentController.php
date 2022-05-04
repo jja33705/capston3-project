@@ -50,7 +50,8 @@ class CommentController extends Controller
                 'not_type' => 'comment',
                 'not_message' => $me->name . '님이' . ' ' . '댓글을 남겼습니다: ' . $request->content,
                 'not_url' => '',
-                'read' => false
+                'read' => false,
+                'post_id' => $post->id
             ]
         );
         FCMService::send(
@@ -60,7 +61,7 @@ class CommentController extends Controller
                 'body' => $me->name . '님이' . ' ' . '댓글을 남겼습니다: ' . $request->content
             ],
             [
-                'postId' => $post->id,
+                'postId' => $id,
                 'type' => 'comment'
             ],
         );
@@ -76,6 +77,12 @@ class CommentController extends Controller
             ], 401);
         }
     }
+
+    public function index($id)
+    {
+    }
+
+
 
     public function reply(Request $request, $id)
     {
