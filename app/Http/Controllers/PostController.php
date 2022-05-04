@@ -206,7 +206,8 @@ class PostController extends Controller
                 'body' => '이게 가나?',
             ],
             [
-                'message' => ['허허허허허헣허']
+                'message1' => '허허허허허헣허',
+                "message2" => '후훟훟후후후훟후'
             ],
         );
 

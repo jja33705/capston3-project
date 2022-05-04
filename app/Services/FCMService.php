@@ -12,7 +12,8 @@ class FCMService
             'notification' => $notification,
             'data' => $data,
             'vibrate' => 1,
-            'sound' => 1
+            'sound' => 1,
+            'click_action' => "OPEN_POST_ACTIVITY"
         ];
 
         $headers = [
