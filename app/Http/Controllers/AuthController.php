@@ -139,7 +139,6 @@ class AuthController extends Controller
     public function profile(Request $request)
     {
         $user = Auth::user();
-
         $user->name = $request->name;
         $user->weight = $request->weight;
         $user->birth = $request->birth;

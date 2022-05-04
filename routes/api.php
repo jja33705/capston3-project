@@ -69,6 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id}', [PostController::class, "destroy"]);
         //일주일 간격으로 요일별 누적 거리 구하는 라우터
         Route::get('/weekRecord', [PostController::class, "weekRecord"]);
+        Route::get('/profile/{id}', [PostController::class, "profile"]);
     });
 
     // 팔로우
@@ -80,6 +81,7 @@ Route::middleware('auth:sanctum')->group(function () {
     //댓글
     Route::prefix('comment')->group(function () {
         Route::post('/store/{id}', [CommentController::class, 'store']);
+        Route::get('/index/{id}', [CommentController::class, 'index']);
         Route::delete('/destroy/{id}', [CommentController::class, 'destroy']);
         Route::post('/store/reply/{id}', [CommentController::class, 'reply']);
     });

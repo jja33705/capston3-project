@@ -80,6 +80,15 @@ class CommentController extends Controller
 
     public function index($id)
     {
+        $comments = Comment::where('post_id', '=', $id)->paginate(10);
+        if ($comments) {
+            return response(
+                $comments,
+                200
+            );
+        } else {
+            return response('', 204);
+        }
     }
 
 
