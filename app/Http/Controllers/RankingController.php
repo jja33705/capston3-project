@@ -56,13 +56,18 @@ class RankingController extends Controller
 
 
         $post = Post::with('user')->whereIn('id', $data2)->where('user_id', '=', $user->id)->first();
+        $posts = Post::whereIn('id', $data2)->orderBy('time')->get();
 
 
         if ($post) {
-            return response([
-                "post" => $post,
-                "rank" => Post::whereIn('id', $data2)->where('time', '<=', $post->time)->count()
-            ], 200);
+            for ($i = 0; $i < count($posts); $i++) {
+                if ($posts[$i]['time'] >= $post->time) {
+                    return response([
+                        "post" => $post,
+                        "rank" => $i + 1
+                    ]);
+                }
+            }
         } else {
             return response('', 204);
         }
