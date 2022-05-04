@@ -55,13 +55,14 @@ class RankingController extends Controller
         }
 
 
-        $post = Post::with('user')->whereIn('id', $data2)->where('user_id', '=', $user->id)->first();
+        $post = Post::with(['user'])->whereIn('id', $data2)->where('user_id', '=', $user->id)->first();
         $posts = Post::whereIn('id', $data2)->orderBy('time')->get();
 
+        // return $rank = Post::with('user')->whereIn('id', $data2)->orderBy('time')->paginate(10);
 
         if ($post) {
             for ($i = 0; $i < count($posts); $i++) {
-                if ($posts[$i]['time'] >= $post->time) {
+                if ($posts[$i]['id'] == $post->id) {
                     return response([
                         "post" => $post,
                         "rank" => $i + 1
